@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>DF CURSOS: Formatação Descomplicada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a; /* Preto Profundo */
+            color: #fcfcfc; /* Branco Suave */
+        }
+        .gold-accent {
+            color: #fbbf24; /* Amber-400 (Dourado/Amarelo Ouro) */
+        }
+        .gold-bg {
+            background-color: #fbbf24;
+        }
+        .cta-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4); /* Sombra Dourada Forte */
+        }
+        .cta-button:hover {
+            background-color: #f59e0b; /* Amber-500 */
+            box-shadow: 0 15px 40px rgba(251, 191, 36, 0.6);
+            transform: translateY(-2px);
+        }
+        .topic-card {
+            background-color: #1a1a1a;
+            border-left: 4px solid #fbbf24;
+            transition: transform 0.2s;
+        }
+        .topic-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(251, 191, 36, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Variáveis de Configuração e Links (Apenas para referência, o link Kiwify está direto no HTML) -->
+    <script>
+        // O link de compra Kiwify agora está inserido diretamente nos botões CTA.
+        const KIWIFY_LINK = "https://pay.kiwify.com.br/nrYgNFY";
+        const WHATSAPP_NUMBER = "5511987654321"; 
+        const WHATSAPP_MESSAGE = "Quero garantir minha vaga no curso Formatação Descomplicada da DF CURSOS e começar a lucrar.";
+    </script>
+
+    <!-- 1. Seção Principal (Hero - Com Banner de Imagem Tecnológica) -->
+    <header id="hero" class="relative p-8 md:p-16 lg:p-20 text-center border-b-4 border-amber-600 overflow-hidden">
+        
+        <!-- Imagem de Fundo (Tag IMG) - Visual Tecnológico e Profissional -->
+        <img src="capa-curso01.png" 
+             alt="Banner profissional com linhas de código e elementos de hardware, simbolizando o domínio em formatação e reparo de sistemas." 
+             class="absolute inset-0 w-full h-full object-cover min-h-[400px]">
+        
+        <!-- Overlay Escuro (MANTIDO para garantir a leitura do texto dourado) -->
+        <div class="absolute inset-0 bg-black opacity-75 z-10"></div>
+
+        <!-- Conteúdo Principal (Textos e Botão) -->
+        <div class="relative z-20 max-w-4xl mx-auto">
+            <h1 class="text-6xl md:text-8xl font-black mb-4 leading-tight gold-accent">
+                DF CURSOS
+            </h1>
+            <h2 class="text-3xl md:text-5xl font-extrabold mb-6 max-w-4xl mx-auto text-white">
+                CURSO <span class="gold-accent">FORMATAÇÃO DESCOMPLICADA</span>
+            </h2>
+            <p class="text-xl md:text-2xl font-light mb-8 max-w-3xl mx-auto text-gray-300">
+                Aprenda a formatar **de forma fácil e rápida**, mesmo que você nunca tenha aberto o painel de controle.
+            </p>
+            
+            <!-- CTA PRINCIPAL: LINK AGORA PARA A KIWIFY -->
+            <a href="https://pay.kiwify.com.br/nrYgNFY" class="purchase-cta cta-button inline-block gold-bg text-gray-900 font-black py-4 px-8 md:px-12 rounded-xl text-xl md:text-3xl transition duration-300 w-full md:w-auto">
+                QUERO DESCOMPLICAR E LUCRAR AGORA!
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. Seção USP (O Curso Que se Paga) -->
+    <section id="usp" class="py-16 px-4 md:px-12 lg:px-24 text-center">
+        <div class="max-w-4xl mx-auto p-8 rounded-2xl bg-gray-800 shadow-2xl shadow-amber-900">
+            <h3 class="text-3xl md:text-4xl font-black mb-4 gold-accent">
+                O ÚNICO CURSO QUE SE PAGA!
+            </h3>
+            <p class="text-xl md:text-2xl font-semibold mb-6 text-white">
+                Com o <span class="gold-accent">primeiro lucro obtido</span> com o conhecimento adquirido, você recupera 100% do seu investimento.
+            </p>
+            <p class="text-lg text-gray-400">
+                Transforme seu aprendizado em **renda extra** imediata. O risco é zero, o retorno é garantido.
+            </p>
+        </div>
+    </section>
+
+    <!-- 3. Seção Target Audience (Público-Alvo) -->
+    <section id="publico" class="py-16 px-4 md:px-12 lg:px-24 text-center bg-gray-900">
+        <h3 class="text-3xl font-black mb-10 text-white">
+            PARA QUEM É A FORMATAÇÃO DESCOMPLICADA?
+        </h3>
+        <!-- Layout em grade: 1 coluna no mobile, 2 no desktop -->
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <div class="p-6 rounded-xl border-2 border-amber-400 bg-gray-950">
+                <p class="text-2xl font-bold gold-accent mb-2">Se Você Nunca Formatou...</p>
+                <p class="text-lg text-gray-300">
+                    Perfeito! Nós te pegamos pela mão e ensinamos tudo do **absoluto zero**, sem termos técnicos complexos. Esqueça a dificuldade e comece com o pé direito, da maneira mais **fácil e rápida**.
+                </p>
+            </div>
+
+            <div class="p-6 rounded-xl border-2 border-amber-400 bg-gray-950">
+                <p class="text-2xl font-bold gold-accent mb-2">Se Você Já Tentou e Travou...</p>
+                <p class="text-lg text-gray-300">
+                    Este é o seu lugar! Você vai **descomplicar** o processo, encontrando a **forma mais eficiente** e profissional para lidar com BIOS, drivers e sistemas operacionais, eliminando a frustração.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Seção Conteúdo Programático Detalhado -->
+    <section id="conteudo-detalhado" class="py-16 px-4 md:px-12 lg:px-24">
+        <div class="max-w-5xl mx-auto">
+            <h3 class="text-3xl md:text-4xl font-black mb-12 gold-accent text-center">
+                DOMÍNIO TOTAL: O QUE VOCÊ VAI APRENDER
+            </h3>
+            
+            <!-- Layout em grade: 1 coluna no mobile, 2 no desktop -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Coluna 1: Fundamentos e Instalação -->
+                <div class="space-y-4">
+                    <h4 class="text-xl md:text-2xl font-bold text-white mb-4 border-b border-gray-700 pb-2">Fundamentos e Preparação</h4>
+                    
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">1. O que é **BIOS/UEFI** e sua função crítica.</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">2. Entendendo o processo de **BOOT** (inicialização).</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">3. Como **mudar a ordem de BOOT** em qualquer máquina.</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">4. O que é um arquivo **ISO** (imagem do sistema).</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">5. Onde **baixar sistemas** operacionais de forma segura.</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">6. O que é um **pendrive bootável**.</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">7. Como **criar um pendrive bootável** de forma descomplicada.</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">8. **Instalação de diversos Sistemas Operacionais** (Linux e Windows).</p></div>
+                </div>
+
+                <!-- Coluna 2: Avançado e Otimização -->
+                <div class="space-y-4">
+                    <h4 class="text-xl md:text-2xl font-bold text-white mb-4 border-b border-gray-700 pb-2">Ambiente de Lucro e Otimização</h4>
+                    
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">9. O que é uma **Máquina Virtual (VM)**.</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">10. Como **criar um ambiente de teste** 100% seguro (VM).</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">11. Como **ativar o Windows gratuitamente** (métodos oficiais e corretos).</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">12. Como **baixar e instalar todos os Drivers** necessários para o Windows.</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">13. Como **baixar e ativar o Pacote Office gratuitamente** (métodos corretos).</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">14. **Criação de Imagem do Sistema** no Linux (backup profissional).</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">15. **Criação de Imagem do Sistema** no Windows (restauração rápida).</p></div>
+                    <div class="topic-card p-4 rounded-lg shadow-md bg-amber-600 text-gray-900 font-extrabold"><p class="text-base md:text-lg">Tudo isso para você **economizar** ou **lucrar imediatamente**.</p></div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- 5. Seção de Preço e CTA Final (Garantia de Retorno) -->
+    <section id="preco-cta" class="py-16 px-4 md:px-12 lg:px-24 bg-gray-950">
+        <div class="max-w-4xl mx-auto text-center">
+            
+            <div class="p-8 md:p-12 rounded-2xl bg-black border-4 border-amber-400 shadow-2xl shadow-amber-900">
+                <p class="text-lg md:text-xl font-bold gold-accent mb-3">
+                    PARE DE PERDER TEMPO E DINHEIRO COM DIFICULDADES
+                </p>
+                <h2 class="text-3xl md:text-5xl font-black text-white mb-6">
+                    Seu Acesso ao <span class="gold-accent">Formatação Descomplicada</span>
+                </h2>
+                
+                <div class="flex flex-col items-center justify-center mb-8">
+                    <span class="text-3xl md:text-4xl font-semibold text-gray-400 line-through">De R$ 147,00</span>
+                    <span class="text-6xl md:text-7xl font-black gold-accent leading-none mt-2">POR APENAS R$ 47,00</span>
+                    <span class="text-xl md:text-2xl font-semibold text-white mt-4">Pague em 10x e recupere no primeiro serviço!</span>
+                </div>
+
+                <!-- CTA FINAL: LINK AGORA PARA A KIWIFY -->
+                <a href="https://pay.kiwify.com.br/nrYgNFY" class="purchase-cta cta-button w-full inline-block gold-bg text-gray-900 font-black py-5 px-10 rounded-xl text-2xl md:text-3xl transition duration-300">
+                    SIM, EU QUERO DESCOMPLICAR E LUCRAR AGORA!
+                </a>
+
+                <p class="mt-6 text-sm text-gray-400 font-semibold flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                    Invista em si mesmo. Sua fonte de Renda Extra começa aqui.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Rodapé Simples -->
+    <footer class="p-6 text-center text-gray-500 text-sm bg-black border-t border-gray-700">
+        <p>&copy; 2025 DF CURSOS. Formação Descomplicada. Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>
