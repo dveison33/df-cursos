@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DF Cursos - Sua Escola</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* bg-slate-50 */
+        }
+        /* Estilo para garantir que o conteúdo principal empurre o sidebar em desktop */
+        .main-content {
+            transition: margin-left 0.3s ease;
+        }
+        /* Estilos de scrollbar para um visual mais limpo (apenas para desktop) */
+        @media (min-width: 768px) {
+            .sidebar-menu {
+                /* Cor de fundo escura para o menu lateral */
+                background-color: #0f172a; /* bg-slate-900 */
+            }
+        }
+        
+        /* Estilo para a animação do menu lateral em mobile */
+        .sidebar-menu {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%); /* Escondido por padrão em mobile */
+            z-index: 50;
+        }
+        .sidebar-menu.open {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Variáveis de Configuração (Preencha com seus dados) -->
+    <script>
+        const WHATSAPP_NUMBER = "5588988405043"; // Coloque seu número de telefone (apenas dígitos)
+        const WHATSAPP_MESSAGE = "Olá! Gostaria de saber mais sobre os cursos de Formatação!";
+        const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+    </script>
+
+    <!-- Menu Lateral (Sidebar) - Adaptável -->
+    <nav id="sidebar" class="sidebar-menu fixed top-0 left-0 h-full w-64 md:w-56 bg-slate-900 shadow-2xl md:translate-x-0">
+        
+        <!-- Ícone de Fechar (Apenas Mobile) -->
+        <button id="close-menu-btn" class="absolute top-4 right-4 text-white p-2 rounded-full md:hidden hover:bg-slate-700">
+            <!-- Ícone X -->
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+
+        <!-- Logo/Título do Curso -->
+        <div class="p-6 pt-12 text-center border-b border-slate-700">
+            <h3 class="text-xl font-extrabold text-yellow-400 tracking-wider">
+                DF<span class="text-white">Cursos</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">Cursos Profissionalizantes</p>
+        </div>
+
+        <!-- Links de Navegação (Menu Principal) -->
+        <div class="flex flex-col p-4 space-y-2">
+            <a href="#inicio" class="flex items-center p-3 text-slate-100 hover:bg-slate-700 rounded-lg transition duration-200">
+                <svg class="w-5 h-5 mr-3 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6"></path></svg>
+                Início
+            </a>
+            <a href="#cursos" class="flex items-center p-3 text-slate-100 hover:bg-slate-700 rounded-lg transition duration-200">
+                <svg class="w-5 h-5 mr-3 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                Nossos Cursos
+            </a>
+            <a href="#metodologia" class="flex items-center p-3 text-slate-100 hover:bg-slate-700 rounded-lg transition duration-200">
+                <svg class="w-5 h-5 mr-3 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253"></path></svg>
+                Metodologia
+            </a>
+        </div>
+
+        <!-- Link de Contato WhatsApp -->
+        <div class="p-4 mt-8">
+            <a id="whatsapp-link" href="#" target="_blank" class="w-full flex items-center justify-center bg-green-500 text-white p-3 rounded-xl font-bold hover:bg-green-600 transition duration-200 shadow-lg shadow-green-500/50">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.3 15.6c-.45.09-.73.08-1.05-.03-.18-.06-1.08-.43-1.84-.79-.83-.4-1.35-.55-1.74-.55-.42 0-.8.07-1.15.14-.35.07-.63.15-.87.21-.24.06-.43.08-.66.02-.23-.06-.5-.22-.76-.49-.26-.27-.47-.64-.71-1.07-.24-.43-.44-.92-.61-1.42-.17-.5-.31-1.08-.31-1.57 0-.5.12-1.02.32-1.32.17-.25.3-.43.5-.63.2-.2.4-.3.6-.3.17 0 .34.02.5.06.16.04.34.1.53.25.19.15.38.35.59.57.21.22.42.48.6.72.18.24.37.52.57.8.2.28.42.6.66.9.24.3.47.6.7.87.23.27.47.53.72.78.25.25.5.5.76.75.26.25.53.5.81.75.28.25.58.5.9.75.32.25.66.5 1.02.75.36.25.75.5 1.16.75.41.25.84.5 1.29.75.45.25.92.5 1.4.75.5.25 1.05.5 1.63.75.58.25 1.2.5 1.8.75 0 0 0 0 0 0z"></path></svg>
+                Fale Conosco
+            </a>
+        </div>
+        
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main id="main-content" class="main-content md:ml-56">
+        
+        <!-- Botão de Menu (Apenas Mobile) -->
+        <header class="md:hidden sticky top-0 bg-white/95 backdrop-blur-sm shadow-md p-4 flex justify-between items-center z-40">
+            <h1 class="text-xl font-bold text-slate-800">DF Cursos</h1>
+            <button id="open-menu-btn" class="p-2 text-slate-800 rounded-lg hover:bg-slate-100">
+                <!-- Ícone Menu Hamburger -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </header>
+
+        <!-- Seção 1: Banner Principal (Hero) -->
+        <section id="inicio" class="bg-gray-800 text-white p-10 md:p-20 shadow-lg" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('capa.png'); background-size: cover; background-position: center;">
+            <div class="max-w-4xl mx-auto text-center">
+                <p class="text-yellow-400 font-bold mb-3 uppercase tracking-widest">
+                    O Próximo Nível da Sua Carreira
+                </p>
+                <h2 class="text-4xl md:text-6xl font-extrabold mb-5 leading-tight">
+                    Domine a Nova Habilidade!
+                </h2>
+                <p class="text-xl md:text-2xl font-light mb-8">
+                    Cursos práticos e rápidos para você se tornar um especialista em notebooks, computadores e celulares.
+                </p>
+                <a href="#cursos" class="inline-block bg-yellow-500 text-gray-900 font-bold py-3 px-8 rounded-full text-lg hover:bg-yellow-400 transition duration-300 shadow-xl shadow-yellow-500/50">
+                    Ver Todos os Cursos
+                </a>
+            </div>
+        </section>
+
+        <!-- Seção 2: Chamada para Conhecer e Vídeo de Metodologia -->
+        <section id="metodologia" class="py-16 px-4 md:px-8 max-w-6xl mx-auto">
+            <h3 class="text-3xl md:text-4xl font-extrabold text-slate-800 text-center mb-4">
+                Por Que Escolher a <span class="text-yellow-500">DF</span>?
+            </h3>
+            <p class="text-center text-slate-600 mb-12 max-w-3xl mx-auto">
+                Nossa metodologia é focada na **prática imediata**. Aprenda fazendo e comece a ter resultados desde a primeira aula.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <!-- Coluna do Texto -->
+                <div class="space-y-6">
+                    <p class="text-slate-700 leading-relaxed">
+                        Nós entendemos que você quer aprender rápido e aplicar o conhecimento. Por isso, nosso material é direto ao ponto, evitando teoria desnecessária e focando nos processos que você realmente usará no dia a dia como técnico.
+                    </p>
+                    <ul class="space-y-3 text-slate-700">
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 mr-3 text-green-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="font-semibold">Aulas 100% Práticas:</span> Simulações e reparos reais.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 mr-3 text-green-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="font-semibold">Suporte Dedicado:</span> Tire suas dúvidas direto com o instrutor.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 mr-3 text-green-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="font-semibold">Certificado de Conclusão:</span> Reconhecimento no mercado.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Coluna do Vídeo (Placeholder) -->
+                 <div class="relative pt-[56.25%] rounded-xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition duration-500">
+                        
+                        <!-- O elemento <video> precisa dos controles para o usuário poder dar play -->
+                        <video controls 
+                               poster="https://placehold.co/1200x675/0f172a/ffffff?text=V%C3%ADdeo+Explicativo" 
+                               class="w-full h-full absolute top-0 left-0 object-cover rounded-xl">
+                            
+                            <!-- *** CAMINHO LOCAL DO SEU VÍDEO (Você precisa ter este arquivo em "./assets/video_metodologia.mp4" ou alterar o caminho) *** -->
+                            <source src="video.mp4" type="video/mp4">
+
+                            <!-- Mensagem de fallback para navegadores antigos -->
+                            Seu navegador não suporta o elemento de vídeo. Por favor, atualize.
+                        </video>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção 3: Cartas de Cursos -->
+        <section id="cursos" class="py-16 px-4 md:px-8 bg-slate-100">
+            <h3 class="text-3xl md:text-4xl font-extrabold text-slate-800 text-center mb-4">
+                Nossa Trilha de <span class="text-yellow-500">Conhecimento</span>
+            </h3>
+            <p class="text-center text-slate-600 mb-12 max-w-3xl mx-auto">
+                Seja um técnico completo! Comece pelo curso de Formatação e avance para as manutenções especializadas.
+            </p>
+
+            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Curso 1: Formatação Descomplicada (DISPONÍVEL) -->
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 border-t-4 border-green-500">
+                    <img src="curso01.png" alt="Imagem do Curso de Formatação" class="w-full h-88 object-cover">
+                    <div class="p-6">
+                        <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                            DISPONÍVEL AGORA
+                        </span>
+                        <h4 class="text-2xl font-bold text-slate-800 mb-3">
+                            Curso 1: Formatação Descomplicada
+                        </h4>
+                        <p class="text-slate-600 mb-4 text-sm">
+                            Aprenda a formatar qualquer computador ou notebook de forma segura, rápida e profissional, do zero!
+                        </p>
+                        <a href="#detalhes-curso-1" class="w-full block text-center bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition duration-200">
+                            Saiba Mais
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Curso 2: Manutenção em Notebook e Computadores (EM BREVE) -->
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-4 border-yellow-500 opacity-60">
+                    <img src="https://placehold.co/600x400/f59e0b/ffffff?text=Manuten%C3%A7%C3%A3o+PC+e+Notebook" alt="Imagem do Curso de Manutenção de PC" class="w-full h-88 object-cover grayscale">
+                    <div class="p-6">
+                        <span class="inline-block bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                            EM BREVE
+                        </span>
+                        <h4 class="text-2xl font-bold text-slate-800 mb-3">
+                            Curso 2: Manutenção em PC e Notebook
+                        </h4>
+                        <p class="text-slate-600 mb-4 text-sm">
+                            Diagnóstico e reparo de hardware: troca de peças, upgrade, solda básica e solução de problemas físicos.
+                        </p>
+                        <button disabled class="w-full block text-center bg-gray-400 text-white font-bold py-3 rounded-lg cursor-not-allowed">
+                            Em Breve
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Curso 3: Manutenção em Celulares (EM BREVE) -->
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden border-t-4 border-red-500 opacity-60">
+                    <img src="https://placehold.co/600x400/ef4444/ffffff?text=Manuten%C3%A7%C3%A3o+em+Celulares" alt="Imagem do Curso de Manutenção de Celulares" class="w-full h-88 object-cover grayscale">
+                    <div class="p-6">
+                        <span class="inline-block bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                            EM BREVE
+                        </span>
+                        <h4 class="text-2xl font-bold text-slate-800 mb-3">
+                            Curso 3: Manutenção em Celulares
+                        </h4>
+                        <p class="text-slate-600 mb-4 text-sm">
+                            Especialização no reparo de smartphones, troca de telas, baterias, conectores e pequenos componentes.
+                        </p>
+                        <button disabled class="w-full block text-center bg-gray-400 text-white font-bold py-3 rounded-lg cursor-not-allowed">
+                            Em Breve
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Seção de Rodapé (Opcional, mas útil) -->
+        <footer class="bg-gray-800 text-white p-6 text-center">
+            <p class="text-sm">&copy; 2024 DF Cursos. Todos os direitos reservados. | <a href="#" class="hover:text-yellow-400">Política de Privacidade</a></p>
+        </footer>
+
+    </main>
+
+    <!-- Overlay para Mobile (Fundo escuro ao abrir o menu) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+
+    <!-- Script para Funcionalidade do Menu Lateral -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const openBtn = document.getElementById('open-menu-btn');
+            const closeBtn = document.getElementById('close-menu-btn');
+            const overlay = document.getElementById('sidebar-overlay');
+            const mainContent = document.getElementById('main-content');
+            const whatsappLinkElement = document.getElementById('whatsapp-link');
+
+            // 1. Configura o link do WhatsApp
+            if (whatsappLinkElement) {
+                whatsappLinkElement.href = whatsappLink;
+            }
+
+            // 2. Função para abrir o menu em mobile
+            const openSidebar = () => {
+                sidebar.classList.add('open');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Evita rolagem no corpo
+            };
+
+            // 3. Função para fechar o menu em mobile
+            const closeSidebar = () => {
+                sidebar.classList.remove('open');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = ''; // Restaura a rolagem
+            };
+
+            // 4. Listeners de eventos
+            if (openBtn) openBtn.addEventListener('click', openSidebar);
+            if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+            if (overlay) overlay.addEventListener('click', closeSidebar);
+
+            // 5. Fecha o menu ao clicar em qualquer link (apenas em mobile)
+            const menuLinks = sidebar.querySelectorAll('a');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    // Verifica se está em mobile antes de fechar
+                    if (window.innerWidth < 768) {
+                        closeSidebar();
+                    }
+                });
+            });
+
+            // 6. Ajusta o layout inicial em desktop
+            const checkInitialLayout = () => {
+                 // Em desktop, o conteúdo principal é empurrado pela largura do menu.
+                if (window.innerWidth >= 768) {
+                    mainContent.style.marginLeft = '14rem'; /* Largura do menu (56 tailwind) */
+                } else {
+                    mainContent.style.marginLeft = '0';
+                    // Garante que o menu esteja escondido ao carregar em mobile
+                    sidebar.classList.remove('open');
+                }
+            };
+
+            checkInitialLayout();
+            window.addEventListener('resize', checkInitialLayout);
+        });
+    </script>
+</body>
+</html>
