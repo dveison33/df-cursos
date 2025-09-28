@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DF Cursos</title>
-    <link rel="icon" href="https://placehold.co/32x32/fbbf24/0a0a0a?text=DF" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -23,7 +22,6 @@
                 background-color: #0f172a; /* bg-slate-900 */
             }
         }
-        }
         
         /* Estilo para a animação do menu lateral em mobile */
         .sidebar-menu {
@@ -33,6 +31,20 @@
         }
         .sidebar-menu.open {
             transform: translateX(0);
+        }
+
+        /* Estilo customizado para o botão de play */
+        #play-btn {
+            backdrop-filter: blur(5px);
+            border: 3px solid white;
+            animation: pulse 2s infinite;
+        }
+
+        /* ANIMAÇÃO PULSE EM VERMELHO (Tailwind red-600: #dc2626) */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
     </style>
 </head>
@@ -101,7 +113,7 @@
         </header>
 
         <!-- Seção 1: Banner Principal (Hero) -->
-        <section id="inicio" class="bg-gray-800 text-white p-10 md:p-20 shadow-lg" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('capa.png'); background-size: cover; background-position: center;">
+        <section id="inicio" class="bg-gray-800 text-white p-10 md:p-20 shadow-lg" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://placehold.co/1200x600/1e293b/ffffff?text=DF+Cursos+|+Domine+a+Nova+Habilidade'); background-size: cover; background-position: center;">
             <div class="max-w-4xl mx-auto text-center">
                 <p class="text-yellow-400 font-bold mb-3 uppercase tracking-widest">
                     O Próximo Nível da Sua Carreira
@@ -149,18 +161,36 @@
                     </ul>
                 </div>
 
-                <!-- Coluna do Vídeo (Placeholder) -->
-                 
+                <!-- Coluna do Vídeo (Embed do Google Drive com Capa) -->
+                <div class="relative pt-[56.25%] rounded-xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition duration-500">
+                    
+                    <!-- Capa (Cover) e Botão de Play (Visível por padrão) -->
+                    <div id="video-cover" class="absolute inset-0 cursor-pointer bg-black flex items-center justify-center">
                         
-                        <!-- O elemento <video> precisa dos controles para o usuário poder dar play -->
-               <div class="relative pt-[56.25%] rounded-xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition duration-500">
+                        <!-- Imagem de Capa. SUBSTITUA CAPA_DO_VIDEO_URL_AQUI pelo URL da sua imagem -->
+                        <img src="CAPA_DO_VIDEO_URL_AQUI" 
+                             alt="Capa do Vídeo de Metodologia" 
+                             onerror="this.onerror=null;this.src='https://placehold.co/800x450/334155/ffffff?text=Clique+para+ver+o+vídeo';"
+                             class="w-full h-full object-cover opacity-70 transition duration-300 hover:opacity-100">
+                        
+                        <!-- Botão de Play (SVG centralizado e animado) -->
+                        <button id="play-btn" class="absolute p-4 bg-red-600/90 hover:bg-red-700 rounded-full shadow-2xl transform transition duration-300 scale-100 hover:scale-110">
+                            <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 3l12 9-12 9V3z"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- 
+                        IFRAME do Google Drive (Escondido inicialmente)
+                        *** SUBSTITUA VIDEO_ID_AQUI PELO ID DO SEU VÍDEO DO GOOGLE DRIVE ***
+                    -->
                     <iframe 
-                        src="https://www.youtube.com/embed/qtF7hdmR-zo?si=3tgNi84O8P-W95Ig" 
-                        title="Metodologia DF Cursos" 
+                        id="video-iframe"
+                        data-src="https://drive.google.com/file/d/VIDEO_ID_AQUI/preview" 
+                        title="Metodologia DF Cursos - Google Drive" 
                         frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allow="autoplay; encrypted-media; fullscreen" 
                         allowfullscreen 
-                        class="w-full h-full absolute top-0 left-0 object-cover">
+                        class="w-full h-full absolute top-0 left-0 object-cover hidden">
                     </iframe>
                 </div>
             </div>
@@ -179,7 +209,7 @@
                 
                 <!-- Curso 1: Formatação Descomplicada (DISPONÍVEL) -->
                 <div class="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 border-t-4 border-green-500">
-                    <img src="curso01.png" alt="Imagem do Curso de Formatação" class="w-full h-88 object-cover">
+                    <img src="https://placehold.co/600x400/10b981/ffffff?text=Formata%C3%A7%C3%A3o+Descomplicada" alt="Imagem do Curso de Formatação" class="w-full h-88 object-cover">
                     <div class="p-6">
                         <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
                             DISPONÍVEL AGORA
@@ -190,7 +220,7 @@
                         <p class="text-slate-600 mb-4 text-sm">
                             Aprenda a formatar qualquer computador ou notebook de forma segura, rápida e profissional, do zero!
                         </p>
-                        <a href="curso01-novo.html" class="w-full block text-center bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition duration-200">
+                        <a href="#detalhes-curso-1" class="w-full block text-center bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition duration-200">
                             Saiba Mais
                         </a>
                     </div>
@@ -239,7 +269,7 @@
 
         <!-- Seção de Rodapé (Opcional, mas útil) -->
         <footer class="bg-gray-800 text-white p-6 text-center">
-            <p class="text-sm">&copy; 2025 DF Cursos. Todos os direitos reservados. | <a href="#" class="hover:text-yellow-400">Política de Privacidade</a></p>
+            <p class="text-sm">&copy; 2024 DF Cursos. Todos os direitos reservados. | <a href="#" class="hover:text-yellow-400">Política de Privacidade</a></p>
         </footer>
 
     </main>
@@ -247,7 +277,7 @@
     <!-- Overlay para Mobile (Fundo escuro ao abrir o menu) -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
 
-    <!-- Script para Funcionalidade do Menu Lateral -->
+    <!-- Script para Funcionalidade do Menu Lateral e Vídeo -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const sidebar = document.getElementById('sidebar');
@@ -257,65 +287,88 @@
             const mainContent = document.getElementById('main-content');
             const whatsappLinkElement = document.getElementById('whatsapp-link');
 
-            // 1. Configura o link do WhatsApp
+            // === 1. Configura o link do WhatsApp ===
+            const WHATSAPP_NUMBER = "5588988405043"; 
+            const WHATSAPP_MESSAGE = "Olá! Gostaria de saber mais sobre os cursos de Formatação!";
+            const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+
             if (whatsappLinkElement) {
                 whatsappLinkElement.href = whatsappLink;
             }
 
-            // 2. Função para abrir o menu em mobile
+            // === 2. Funcionalidade do Menu Sidebar ===
             const openSidebar = () => {
                 sidebar.classList.add('open');
                 overlay.classList.remove('hidden');
                 document.body.style.overflow = 'hidden'; // Evita rolagem no corpo
             };
 
-            // 3. Função para fechar o menu em mobile
             const closeSidebar = () => {
                 sidebar.classList.remove('open');
                 overlay.classList.add('hidden');
                 document.body.style.overflow = ''; // Restaura a rolagem
             };
 
-            // 4. Listeners de eventos
             if (openBtn) openBtn.addEventListener('click', openSidebar);
             if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
             if (overlay) overlay.addEventListener('click', closeSidebar);
 
-            // 5. Fecha o menu ao clicar em qualquer link (apenas em mobile)
             const menuLinks = sidebar.querySelectorAll('a');
             menuLinks.forEach(link => {
                 link.addEventListener('click', () => {
-                    // Verifica se está em mobile antes de fechar
                     if (window.innerWidth < 768) {
                         closeSidebar();
                     }
                 });
             });
 
-            // 6. Ajusta o layout inicial em desktop
+            // Ajusta o layout inicial e no redimensionamento
             const checkInitialLayout = () => {
-                 // Em desktop, o conteúdo principal é empurrado pela largura do menu.
                 if (window.innerWidth >= 768) {
-                    mainContent.style.marginLeft = '14rem'; /* Largura do menu (56 tailwind) */
+                    mainContent.style.marginLeft = '14rem';
                 } else {
                     mainContent.style.marginLeft = '0';
-                    // Garante que o menu esteja escondido ao carregar em mobile
                     sidebar.classList.remove('open');
                 }
             };
-
             checkInitialLayout();
             window.addEventListener('resize', checkInitialLayout);
+
+            // === 3. Funcionalidade do Player de Vídeo com Capa (CORRIGIDO) ===
+            const videoCover = document.getElementById('video-cover');
+            const videoIframe = document.getElementById('video-iframe');
+
+            if (videoCover && videoIframe) {
+                videoCover.addEventListener('click', () => {
+                    // Pega o URL do data-src
+                    const videoSrc = videoIframe.getAttribute('data-src');
+                    
+                    if (!videoSrc || videoSrc.includes("VIDEO_ID_AQUI")) {
+                        console.error("ERRO CRÍTICO: O ID do vídeo (VIDEO_ID_AQUI) não foi substituído no data-src do iframe!");
+                        // Exibe uma mensagem de erro na capa.
+                        const coverImage = videoCover.querySelector('img');
+                        if (coverImage) {
+                            coverImage.src = 'https://placehold.co/800x450/fecaca/991b1b?text=ERRO!+ID+do+VÍDEO+Ausente';
+                            coverImage.alt = 'Erro: ID do vídeo do Google Drive não preenchido.';
+                        }
+                        return;
+                    }
+
+                    // Se o src estiver vazio, carrega o vídeo. Isso evita recarregar se o usuário clicar fora.
+                    if (videoIframe.src === "") {
+                        // Constrói o URL final, adicionando autoplay.
+                        const finalSrc = videoSrc + '?autoplay=1';
+                        videoIframe.src = finalSrc;
+                        console.log("Vídeo carregando com URL:", finalSrc);
+                        console.warn("Se o vídeo não funcionar, VERIFIQUE AS PERMISSÕES DE COMPARTILHAMENTO no Google Drive: deve ser 'Qualquer pessoa com o link'.");
+                    }
+                    
+                    // Esconde a capa e mostra o iframe
+                    videoCover.classList.add('hidden');
+                    videoIframe.classList.remove('hidden');
+                });
             }
         });
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
