@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DF Cursos</title>
+    <link rel="icon" href="https://placehold.co/32x32/fbbf24/0a0a0a?text=DF" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -113,7 +114,7 @@
         </header>
 
         <!-- Seção 1: Banner Principal (Hero) -->
-        <section id="inicio" class="bg-gray-800 text-white p-10 md:p-20 shadow-lg" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://placehold.co/1200x600/1e293b/ffffff?text=DF+Cursos+|+Domine+a+Nova+Habilidade'); background-size: cover; background-position: center;">
+        <section id="inicio" class="bg-gray-800 text-white p-10 md:p-20 shadow-lg" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('capa.png'); background-size: cover; background-position: center;">
             <div class="max-w-4xl mx-auto text-center">
                 <p class="text-yellow-400 font-bold mb-3 uppercase tracking-widest">
                     O Próximo Nível da Sua Carreira
@@ -163,34 +164,18 @@
 
                 <!-- Coluna do Vídeo (Embed do Google Drive com Capa) -->
                 <div class="relative pt-[56.25%] rounded-xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition duration-500">
-                    
-                    <!-- Capa (Cover) e Botão de Play (Visível por padrão) -->
-                    <div id="video-cover" class="absolute inset-0 cursor-pointer bg-black flex items-center justify-center">
-                        
-                        <!-- Imagem de Capa. SUBSTITUA CAPA_DO_VIDEO_URL_AQUI pelo URL da sua imagem -->
-                        <img src="CAPA_DO_VIDEO_URL_AQUI" 
-                             alt="Capa do Vídeo de Metodologia" 
-                             onerror="this.onerror=null;this.src='https://placehold.co/800x450/334155/ffffff?text=Clique+para+ver+o+vídeo';"
-                             class="w-full h-full object-cover opacity-70 transition duration-300 hover:opacity-100">
-                        
-                        <!-- Botão de Play (SVG centralizado e animado) -->
-                        <button id="play-btn" class="absolute p-4 bg-red-600/90 hover:bg-red-700 rounded-full shadow-2xl transform transition duration-300 scale-100 hover:scale-110">
-                            <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 3l12 9-12 9V3z"/></svg>
-                        </button>
-                    </div>
-
                     <!-- 
-                        IFRAME do Google Drive (Escondido inicialmente)
-                        *** SUBSTITUA VIDEO_ID_AQUI PELO ID DO SEU VÍDEO DO GOOGLE DRIVE ***
+                        ATENÇÃO: SUBSTITUA O CÓDIGO 'XXXXXXXXXXX' ABAIXO PELO ID DO SEU VÍDEO DO YOUTUBE.
+                        Os parâmetros 'rel=0', 'modestbranding=1' e 'showinfo=0' garantem que não apareçam vídeos sugeridos. 
+                        Este ID é apenas um PLACEHOLDER para o layout.
                     -->
                     <iframe 
-                        id="video-iframe"
-                        data-src="https://drive.google.com/file/d/VIDEO_ID_AQUI/preview" 
-                        title="Metodologia DF Cursos - Google Drive" 
+                        src="https://www.youtube.com/embed/qtF7hdmR-zo?si=CCmP3vqVxwcZLRZS" 
+                        title="Metodologia DF Cursos" 
                         frameborder="0" 
-                        allow="autoplay; encrypted-media; fullscreen" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                         allowfullscreen 
-                        class="w-full h-full absolute top-0 left-0 object-cover hidden">
+                        class="w-full h-full absolute top-0 left-0 object-cover">
                     </iframe>
                 </div>
             </div>
@@ -209,7 +194,7 @@
                 
                 <!-- Curso 1: Formatação Descomplicada (DISPONÍVEL) -->
                 <div class="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 border-t-4 border-green-500">
-                    <img src="https://placehold.co/600x400/10b981/ffffff?text=Formata%C3%A7%C3%A3o+Descomplicada" alt="Imagem do Curso de Formatação" class="w-full h-88 object-cover">
+                    <img src="curso01.png" alt="Imagem do Curso de Formatação" class="w-full h-88 object-cover">
                     <div class="p-6">
                         <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
                             DISPONÍVEL AGORA
@@ -220,7 +205,7 @@
                         <p class="text-slate-600 mb-4 text-sm">
                             Aprenda a formatar qualquer computador ou notebook de forma segura, rápida e profissional, do zero!
                         </p>
-                        <a href="#detalhes-curso-1" class="w-full block text-center bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition duration-200">
+                        <a href="curso01-novo.html" class="w-full block text-center bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition duration-200">
                             Saiba Mais
                         </a>
                     </div>
@@ -372,3 +357,4 @@
     </script>
 </body>
 </html>
+
