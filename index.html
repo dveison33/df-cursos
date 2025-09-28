@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+
+    <!DOCTYPE html>
 <html lang="pt-BR" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DF Cursos</title>
-    <link rel="icon" href="favorito1.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +101,7 @@
         </header>
 
         <!-- Seção 1: Banner Principal (Hero) -->
-        <section id="inicio" class="bg-gray-800 text-white p-10 md:p-20 shadow-lg" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('capa.png'); background-size: cover; background-position: center;">
+        <section id="inicio" class="bg-gray-800 text-white p-10 md:p-20 shadow-lg" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://placehold.co/1200x600/1e293b/ffffff?text=DF+Cursos+|+Domine+a+Nova+Habilidade'); background-size: cover; background-position: center;">
             <div class="max-w-4xl mx-auto text-center">
                 <p class="text-yellow-400 font-bold mb-3 uppercase tracking-widest">
                     O Próximo Nível da Sua Carreira
@@ -148,15 +149,14 @@
                     </ul>
                 </div>
 
-                <!-- Coluna do Vídeo (Placeholder) -->
-                 <div class="relative pt-[56.25%] rounded-xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition duration-500">
+                <!-- Coluna do Vídeo (Embed do YouTube) -->
+                <div class="relative pt-[56.25%] rounded-xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition duration-500">
                     <!-- 
-                        ATENÇÃO: SUBSTITUA O CÓDIGO 'XXXXXXXXXXX' ABAIXO PELO ID DO SEU VÍDEO DO YOUTUBE.
-                        Os parâmetros 'rel=0', 'modestbranding=1' e 'showinfo=0' garantem que não apareçam vídeos sugeridos. 
-                        Este ID é apenas um PLACEHOLDER para o layout.
+                        ATENÇÃO: Este é o ERRO. Você DEVE substituir 'XXXXXXXXXXX' pelo ID real do seu vídeo do YouTube.
+                        Utilizamos 'youtube-nocookie.com', 'rel=0' e 'modestbranding=1' para remover sugestões e minimizar o branding.
                     -->
                     <iframe 
-                        src="https://www.youtube.com/embed/qtF7hdmR-zo?si=CCmP3vqVxwcZLRZS" 
+                        src="https://www.youtube-nocookie.com/embed/XXXXXXXXXXX?autoplay=0&rel=0&modestbranding=1" 
                         title="Metodologia DF Cursos" 
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -180,7 +180,8 @@
                 
                 <!-- Curso 1: Formatação Descomplicada (DISPONÍVEL) -->
                 <div class="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 border-t-4 border-green-500">
-                    <img src="curso01.png" alt="Imagem do Curso de Formatação" class="w-full h-88 object-cover">
+                    <!-- A imagem original 'curso01.png' foi substituída por um placeholder para visualização. -->
+                    <img src="https://placehold.co/600x400/10b981/ffffff?text=Formata%C3%A7%C3%A3o+Descomplicada" alt="Imagem do Curso de Formatação" class="w-full h-88 object-cover">
                     <div class="p-6">
                         <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
                             DISPONÍVEL AGORA
@@ -191,7 +192,7 @@
                         <p class="text-slate-600 mb-4 text-sm">
                             Aprenda a formatar qualquer computador ou notebook de forma segura, rápida e profissional, do zero!
                         </p>
-                        <a href="curso01-novo.html" class="w-full block text-center bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition duration-200">
+                        <a href="#detalhes-curso-1" class="w-full block text-center bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition duration-200">
                             Saiba Mais
                         </a>
                     </div>
@@ -259,6 +260,10 @@
             const whatsappLinkElement = document.getElementById('whatsapp-link');
 
             // 1. Configura o link do WhatsApp
+            const WHATSAPP_NUMBER = "5588988405043"; 
+            const WHATSAPP_MESSAGE = "Olá! Gostaria de saber mais sobre os cursos de Formatação!";
+            const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+
             if (whatsappLinkElement) {
                 whatsappLinkElement.href = whatsappLink;
             }
@@ -282,7 +287,7 @@
             if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
             if (overlay) overlay.addEventListener('click', closeSidebar);
 
-            // 5. Fecha o menu ao clicar em qualquer link (apenas em mobile)
+            // 5. Fechar o menu ao clicar em qualquer link (apenas em mobile)
             const menuLinks = sidebar.querySelectorAll('a');
             menuLinks.forEach(link => {
                 link.addEventListener('click', () => {
@@ -309,13 +314,3 @@
             window.addEventListener('resize', checkInitialLayout);
         });
     </script>
-</body>
-</html>
-
-
-
-
-
-
-
-
