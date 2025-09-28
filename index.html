@@ -154,19 +154,32 @@
                  
                         
                         <!-- O elemento <video> precisa dos controles para o usuário poder dar play -->
-                <div class="relative pt-[56.25%] rounded-xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition duration-500">
-                    <!-- 
-                        ATENÇÃO: SUBSTITUA O CÓDIGO 'XXXXXXXXXXX' ABAIXO PELO ID DO SEU VÍDEO DO YOUTUBE.
-                        Os parâmetros 'rel=0', 'modestbranding=1' e 'showinfo=0' garantem que não apareçam vídeos sugeridos. 
-                        Este ID é apenas um PLACEHOLDER para o layout.
-                    -->
+               <div class="relative pt-[56.25%] rounded-xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition duration-500">
+                    
+                    <!-- Capa (Cover) e Botão de Play (Visível por padrão) -->
+                    <div id="video-cover" class="absolute inset-0 cursor-pointer bg-black flex items-center justify-center">
+                        
+                        <!-- Imagem de Capa. SUBSTITUA CAPA_DO_VIDEO_URL_AQUI pelo URL da sua imagem -->
+                        <img src="capa-video.png" 
+                             alt="Capa do Vídeo de Metodologia" 
+                             onerror="this.onerror=null;this.src='https://placehold.co/800x450/334155/ffffff?text=Clique+para+ver+o+vídeo';"
+                             class="w-full h-full object-cover opacity-70 transition duration-300 hover:opacity-100">
+                        
+                        <!-- Botão de Play (SVG centralizado e animado) -->
+                        <button id="play-btn" class="absolute p-4 bg-red-600/90 hover:bg-red-700 rounded-full shadow-2xl transform transition duration-300 scale-100 hover:scale-110">
+                            <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 3l12 9-12 9V3z"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- IFRAME do Google Drive (Escondido inicialmente) -->
                     <iframe 
-                        src="https://drive.google.com/file/d/1bPoteRtj0XigrJCq0OyQJt5rD2xCz5sw/preview" 
-                        title="Metodologia DF Cursos" 
+                        id="video-iframe"
+                        data-src="https://drive.google.com/file/d/1bPoteRtj0XigrJCq0OyQJt5rD2xCz5sw/preview" 
+                        title="Metodologia DF Cursos - Google Drive" 
                         frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allow="autoplay; encrypted-media; fullscreen" 
                         allowfullscreen 
-                        class="w-full h-full absolute top-0 left-0 object-cover">
+                        class="w-full h-full absolute top-0 left-0 object-cover hidden">
                     </iframe>
                 </div>
             </div>
@@ -316,4 +329,5 @@
     </script>
 </body>
 </html>
+
 
