@@ -25,11 +25,6 @@
                 background-color: #0f172a; /* bg-slate-900 */
             }
         }
-
-        #play-btn {
-            backdrop-filter: blur(5px);
-            border: 3px solid white;
-            animation: pulse 2s infinite;
         }
         
         /* Estilo para a animação do menu lateral em mobile */
@@ -161,18 +156,13 @@
                         
                         <!-- O elemento <video> precisa dos controles para o usuário poder dar play -->
                <div class="relative pt-[56.25%] rounded-xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition duration-500">
-                    <!-- 
-                        IFRAME do Google Drive (Escondido inicialmente)
-                        *** SUBSTITUA VIDEO_ID_AQUI PELO ID DO SEU VÍDEO DO GOOGLE DRIVE ***
-                    -->
                     <iframe 
-                        id="video-iframe"
-                        data-src="https://www.youtube.com/embed/qtF7hdmR-zo?si=3tgNi84O8P-W95Ig" 
-                        title="Metodologia DF Cursos - Google Drive" 
+                        src="https://www.youtube.com/embed/qtF7hdmR-zo?si=3tgNi84O8P-W95Ig" 
+                        title="Metodologia DF Cursos" 
                         frameborder="0" 
-                        allow="autoplay; encrypted-media; fullscreen" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                         allowfullscreen 
-                        class="w-full h-full absolute top-0 left-0 object-cover hidden">
+                        class="w-full h-full absolute top-0 left-0 object-cover">
                     </iframe>
                 </div>
             </div>
@@ -318,40 +308,11 @@
 
             checkInitialLayout();
             window.addEventListener('resize', checkInitialLayout);
-            
-            // === 3. Funcionalidade do Player de Vídeo com Capa ===
-            const videoCover = document.getElementById('video-cover');
-            const videoIframe = document.getElementById('video-iframe');
-
-            if (videoCover && videoIframe) {
-                videoCover.addEventListener('click', () => {
-                    // Pega o URL do data-src
-                    const videoSrc = videoIframe.getAttribute('data-src');
-                    
-                    if (videoSrc && videoSrc.includes("VIDEO_ID_AQUI")) {
-                        console.error("ERRO: Por favor, substitua 'VIDEO_ID_AQUI' pelo ID real do seu vídeo do Google Drive.");
-                        // Exibe uma mensagem de erro na capa, se ainda estiver visível.
-                        const coverImage = videoCover.querySelector('img');
-                        if (coverImage) {
-                            coverImage.src = 'https://placehold.co/800x450/ccfbf1/f87171?text=ERRO+DE+VÍDEO!+Verifique+o+ID+e+Permissão+do+Drive.';
-                        }
-                        return;
-                    }
-
-                    if (videoSrc && videoIframe.src === "") {
-                        // Carrega o iframe com autoplay.
-                        videoIframe.src = videoSrc + '?autoplay=1'; 
-                    }
-                    
-                    // Esconde a capa e mostra o iframe
-                    videoCover.classList.add('hidden');
-                    videoIframe.classList.remove('hidden');
-                });
-            }
         });
     </script>
 </body>
 </html>
+
 
 
 
