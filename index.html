@@ -161,25 +161,6 @@
                         
                         <!-- O elemento <video> precisa dos controles para o usuário poder dar play -->
                <div class="relative pt-[56.25%] rounded-xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition duration-500">
-                    
-                    <!-- Capa (Cover) e Botão de Play (Visível por padrão) -->
-                    <div id="video-cover" class="absolute inset-0 cursor-pointer bg-black flex items-center justify-center">
-                        
-                        <!-- 
-                            *** SUBSTITUA ESTE URL PELA CAPA DESEJADA ***
-                            Se a imagem não carregar, aparecerá um placeholder.
-                        -->
-                        <img src="capa-video.png" 
-                             alt="Capa do Vídeo de Metodologia" 
-                             onerror="this.onerror=null;this.src='https://placehold.co/800x450/334155/ffffff?text=Clique+para+ver+o+vídeo';"
-                             class="w-full h-full object-cover opacity-70 transition duration-300 hover:opacity-100">
-                        
-                        <!-- Botão de Play (SVG centralizado e animado) -->
-                        <button id="play-btn" class="absolute p-4 bg-red-600/90 hover:bg-red-700 rounded-full shadow-2xl transform transition duration-300 scale-100 hover:scale-110">
-                            <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 3l12 9-12 9V3z"/></svg>
-                        </button>
-                    </div>
-
                     <!-- 
                         IFRAME do Google Drive (Escondido inicialmente)
                         *** SUBSTITUA VIDEO_ID_AQUI PELO ID DO SEU VÍDEO DO GOOGLE DRIVE ***
@@ -371,6 +352,7 @@
     </script>
 </body>
 </html>
+
 
 
 
