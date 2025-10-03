@@ -65,13 +65,13 @@
 
         // ==============================================================================
         // --- CHAVE DA API DA GEMINI ---
-        // Se estiver no Canvas, use "". O Canvas injeta a chave automaticamente.
-        // SE ESTIVER EM GITHUB PAGES/HOSPEDAGEM PRÓPRIA, COLOQUE SUA CHAVE AQUI.
+        // Se estiver no Canvas, use "". O Canvas injeta a chave automaticamente (__initial_api_key).
+        // SE ESTIVER EM GITHUB PAGES/HOSPEDAGEM PRÓPRIA, VOCÊ DEVE INSERIR SUA CHAVE AQUI.
         // **AVISO DE SEGURANÇA: Expor chaves em código público (GitHub Pages) não é seguro!**
-        const USER_GEMINI_API_KEY = ""; // <--- COLOQUE SUA CHAVE AQUI PARA PROD.
+        const PRODUCTION_API_KEY = ""; // <--- COLOQUE SUA CHAVE AQUI PARA PROD.
         
         // A chave final usa a chave do ambiente Canvas (se existir) ou a chave definida acima.
-        const API_KEY = typeof __initial_api_key !== 'undefined' ? __initial_api_key : USER_GEMINI_API_KEY; 
+        const API_KEY = typeof __initial_api_key !== 'undefined' ? __initial_api_key : PRODUCTION_API_KEY; 
         // ==============================================================================
 
 
@@ -115,6 +115,51 @@
             }
         };
 
+        /**
+         * Verifica o status da configuração da API e atualiza o painel de diagnóstico.
+         */
+        const checkConfigStatus = () => {
+            const diagnoseDiv = document.getElementById('diagnostic-output');
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const outputDiv = document.getElementById('ai-output');
+            
+            // 1. Verifica se a chave foi injetada pelo Canvas (ambiente de teste)
+            if (typeof __initial_api_key !== 'undefined' && __initial_api_key.length > 0) {
+                diagnoseDiv.textContent = 'STATUS: Ambiente Canvas/Teste. Chave de API injetada automaticamente. PRONTO PARA USAR.';
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = 'Analisar Defeito com IA';
+                outputDiv.innerHTML = '<p class="text-gray-400">Os resultados da análise do Gemini aparecerão aqui após o envio.</p>';
+                return true;
+            }
+
+            // 2. Verifica se o usuário inseriu uma chave para produção (GitHub Pages, etc.)
+            if (PRODUCTION_API_KEY && PRODUCTION_API_KEY.length > 10) { // Uma chave válida deve ter um bom comprimento
+                diagnoseDiv.textContent = 'STATUS: Modo de Produção. Chave de API Pessoal DETECTADA. PRONTO PARA USAR.';
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = 'Analisar Defeito com IA';
+                outputDiv.innerHTML = '<p class="text-gray-400">Os resultados da análise do Gemini aparecerão aqui após o envio.</p>';
+                return true;
+            }
+
+            // 3. Chave ausente (Este é o motivo da falha no GitHub Pages)
+            diagnoseDiv.textContent = `
+STATUS: ERRO DE CONFIGURAÇÃO CRÍTICO.
+MOTIVO: A CHAVE DA API ESTÁ AUSENTE. (Necessária para GitHub Pages/Hospedagem Externa).
+
+PASSO PARA CORRIGIR:
+1. Obtenha sua chave da Gemini API.
+2. No código-fonte (index.html), substitua '""' pela sua chave na variável 'PRODUCTION_API_KEY'.
+            `;
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '🚨 ERRO: Inserir Chave API';
+            outputDiv.innerHTML = `
+                <p class="text-red-400 font-bold mb-2">🚨 ERRO CRÍTICO: Chave da API Ausente!</p>
+                <p class="text-sm text-gray-400">O aplicativo **não funcionará** corretamente em ambientes externos (como GitHub Pages) até que você insira sua chave pessoal da Gemini API (PRODUCTION_API_KEY) no código-fonte.</p>
+            `;
+            return false;
+        };
+
+
         // --- AUTENTICAÇÃO E INICIALIZAÇÃO ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -138,6 +183,7 @@
             document.getElementById('user-id-display').textContent = currentUserId;
             authReady = true;
             console.log("Autenticação Firebase concluída. User ID:", currentUserId);
+            checkConfigStatus(); // Verifica o status da chave após a autenticação inicial
         });
 
         // --- FUNÇÕES DE ANÁLISE DE IA ---
@@ -155,23 +201,16 @@
                 return;
             }
 
+            // Verifica o status da chave antes de prosseguir com a requisição
+            if (!checkConfigStatus()) {
+                // O status de erro (chave ausente) já foi atualizado por checkConfigStatus()
+                return; 
+            }
+
             // Exibe o estado de carregamento
             analyzeBtn.disabled = true;
             analyzeBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Análisando com IA...';
             outputDiv.innerHTML = '<p class="text-gray-400">Consultando o Gemini para uma análise...</p>';
-
-            // Verifica se a chave foi definida fora do ambiente Canvas (caso contrário, a requisição falhará)
-            if (API_KEY === "" && typeof __initial_api_key === 'undefined') {
-                 outputDiv.innerHTML = `
-                    <p class="text-red-400 font-bold mb-2">ERRO: Chave da API Ausente!</p>
-                    <p class="text-sm text-gray-400">Se você está em um ambiente fora do Canvas (como GitHub Pages), precisa obter e inserir sua chave da Gemini API na variável <code>USER_GEMINI_API_KEY</code> no código-fonte.</p>
-                `;
-                diagnoseDiv.textContent = 'STATUS: ERRO DE CONFIGURAÇÃO. Chave da API (API_KEY) não está definida para uso em produção.';
-                analyzeBtn.disabled = false;
-                analyzeBtn.innerHTML = 'Analisar Defeito com IA';
-                console.error("ERRO CRÍTICO: Chave da API Gemini está vazia. Não é possível conectar fora do ambiente de teste.");
-                return;
-            }
             
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
 
@@ -250,16 +289,20 @@
                 
                 // Exibe erro detalhado no painel de diagnóstico
                 const errorDetail = error.message.replace('Erro na API (Falha na requisição): ', '');
-                diagnoseDiv.textContent = `STATUS: ERRO FATAL (${error.name})\n\nMENSAGEM: ${errorDetail}\n\nPASSO A PASSO PARA CORRIGIR:\n1. Se estiver no GitHub Pages, COLOQUE sua chave de API na variável USER_GEMINI_API_KEY no código.\n2. Verifique sua conexão.`;
+                diagnoseDiv.textContent = `STATUS: ERRO FATAL (${error.name})\n\nMENSAGEM: ${errorDetail}\n\nPASSO A PASSO PARA CORRIGIR:\n1. Certifique-se de que a chave inserida é válida.\n2. Verifique o console do navegador (F12) para códigos de erro da API (Ex: 400, 403).`;
 
             } finally {
-                analyzeBtn.disabled = false;
-                analyzeBtn.innerHTML = 'Analisar Defeito com IA';
+                // Garante que o botão volte ao normal se a config estiver OK
+                if (API_KEY.length > 0) {
+                     analyzeBtn.disabled = false;
+                     analyzeBtn.innerHTML = 'Analisar Defeito com IA';
+                }
             }
         };
         
-        // Expõe a função de análise para o botão no HTML
+        // Expõe a função de análise e o status checker para o HTML
         window.analyzeDefect = analyzeDefect;
+        window.checkConfigStatus = checkConfigStatus;
     </script>
 </head>
 <body class="min-h-screen p-4 md:p-8">
@@ -301,10 +344,10 @@
                 </div>
             </div>
 
-            <!-- Painel de Diagnóstico -->
+            <!-- Painel de Diagnóstico (Melhorado para feedback imediato) -->
             <div class="mt-8 pt-4 border-t border-gray-700">
                 <h3 class="text-lg font-semibold mb-2 text-gray-400">Diagnóstico da Conexão (Para Debug):</h3>
-                <pre id="diagnostic-output" class="bg-gray-800 p-3 rounded-lg text-xs overflow-auto max-h-40 text-red-300">Aguardando a primeira tentativa de análise...</pre>
+                <pre id="diagnostic-output" class="bg-gray-800 p-3 rounded-lg text-xs overflow-auto max-h-40 text-red-300">Aguardando inicialização e verificação de chave API...</pre>
                 <p class="text-xs text-gray-500 mt-2">Se a conexão falhar, verifique o **Console do Navegador (F12)** para o erro JSON completo.</p>
             </div>
         </section>
