@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DF Celulares - Analisador de Defeitos IA e Suporte WhatsApp</title>
+    <!-- Carrega o Tailwind CSS para um estilo moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a fonte Inter e cores padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a; /* Cinza Escuro/Quase Preto */
+            color: #f3f4f6; /* Cinza Claro para o texto */
+        }
+        /* Estilo para a cor amarela primária */
+        .primary-yellow {
+            background-color: #facc15; /* Amarelo 500 */
+            color: #1f2937; /* Cinza Escuro para texto no amarelo */
+        }
+        .text-yellow-highlight {
+            color: #facc15; /* Amarelo 500 */
+        }
+        /* Estiliza a barra de rolagem (mantida para a área de análise da IA) */
+        .scrollbar-custom::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scrollbar-custom::-webkit-scrollbar-thumb {
+            background-color: #4b5563; /* Cinza médio */
+            border-radius: 4px;
+        }
+        .scrollbar-custom::-webkit-scrollbar-track {
+            background-color: #1f2937; /* Cinza escuro */
+        }
+        /* Adiciona um efeito de sombra amarela nos cartões */
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1), 0 0 20px rgba(252, 212, 0, 0.2);
+        }
+        /* Para telas menores, ajusta o layout para empilhar */
+        @media (max-width: 768px) {
+            .responsive-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* Estilo para o botão WhatsApp */
+        .whatsapp-btn {
+            background-color: #25D366; /* Cor oficial do WhatsApp */
+        }
+        .whatsapp-btn:hover {
+            background-color: #1DA851;
+        }
+    </style>
+    <!-- Configurações para Tailwind (usando a cor amarela) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-yellow': '#facc15',
+                        'dark-gray': '#1a1a1a',
+                        'light-gray': '#e5e7eb',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Firebase Imports (Apenas Auth para estabilidade do ambiente) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
+        // Variáveis globais obrigatórias do ambiente
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : undefined;
+
+        // Inicialização do Firebase (Apenas para garantir que a autenticação de ambiente funcione)
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        let currentUserId = null;
+        let authReady = false;
+
+        // Função utilitária para converter Base64 em ArrayBuffer
+        const base64ToArrayBuffer = (base64) => {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        };
+
+        // Função de retry com backoff exponencial para chamadas de API
+        const fetchWithRetry = async (url, options, retries = 3) => {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === retries - 1) throw error;
+                    const delay = Math.pow(2, i) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        };
+
+        // --- AUTENTICAÇÃO E INICIALIZAÇÃO ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+            } else {
+                // Tenta usar o token inicial ou faz login anônimo
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        currentUserId = auth.currentUser.uid;
+                    } else {
+                        await signInAnonymously(auth);
+                        currentUserId = auth.currentUser.uid;
+                    }
+                } catch (error) {
+                    console.error("Erro ao autenticar no Firebase:", error);
+                    currentUserId = crypto.randomUUID();
+                }
+            }
+            
+            document.getElementById('user-id-display').textContent = currentUserId;
+            authReady = true;
+            console.log("Autenticação Firebase concluída. User ID:", currentUserId);
+        });
+
+        // --- FUNÇÕES DE ANÁLISE DE IA ---
+
+        const analyzeDefect = async () => {
+            const model = document.getElementById('phone-model').value;
+            const defect = document.getElementById('defect-description').value;
+            const outputDiv = document.getElementById('ai-output');
+            const analyzeBtn = document.getElementById('analyze-btn');
+            
+            if (!model || !defect) {
+                outputDiv.innerHTML = '<p class="text-red-400">Por favor, preencha o modelo do celular e a descrição do defeito.</p>';
+                return;
+            }
+
+            // Exibe o estado de carregamento
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Análisando com IA...';
+            outputDiv.innerHTML = '<p class="text-gray-400">Consultando o Gemini para uma análise...</p>';
+
+
+            const systemPrompt = "Você é um analista técnico de celulares experiente e prestativo. Sua tarefa é analisar o modelo e a descrição do defeito e fornecer: 1. Uma provável causa (Causa Provável). 2. Uma ou duas sugestões de solução/próximo passo que o usuário pode tentar (Soluções Sugeridas). Mantenha a resposta concisa e profissional, em português.";
+            const userQuery = `Modelo do Celular: ${model}. Defeito ou Fato Ocorrido: ${defect}`;
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                tools: [{ "google_search": {} }], // Adiciona o Google Search para grounding
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            try {
+                const response = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    const text = candidate.content.parts[0].text;
+                    
+                    let sourcesHtml = '';
+                    const groundingMetadata = candidate.groundingMetadata;
+                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                        const sources = groundingMetadata.groundingAttributions
+                            .map(attr => attr.web)
+                            .filter(web => web && web.uri && web.title);
+                            
+                        if (sources.length > 0) {
+                            sourcesHtml = '<div class="mt-4 pt-2 border-t border-gray-700"><p class="text-xs font-semibold text-yellow-highlight mb-1">Fontes:</p>';
+                            sources.forEach(source => {
+                                sourcesHtml += `<a href="${source.uri}" target="_blank" class="block text-xs text-gray-400 hover:text-primary-yellow truncate" title="${source.title}">${source.title}</a>`;
+                            });
+                            sourcesHtml += '</div>';
+                        }
+                    }
+
+                    // Formata a saída da IA em Markdown para HTML
+                    const formattedText = text
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\n/g, '<br>');
+
+                    outputDiv.innerHTML = `
+                        <div class="p-4 bg-gray-800 rounded-lg card-shadow">
+                            ${formattedText}
+                            ${sourcesHtml}
+                        </div>
+                    `;
+
+                } else {
+                    outputDiv.innerHTML = '<p class="text-red-400">Não foi possível obter uma resposta da IA. Tente reformular a descrição.</p>';
+                }
+
+            } catch (error) {
+                console.error("Erro na chamada da API Gemini:", error);
+                outputDiv.innerHTML = `<p class="text-red-400">Erro de conexão: ${error.message}. Verifique a sua chave API e a conexão.</p>`;
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = 'Analisar Defeito com IA';
+            }
+        };
+        
+        // Expõe a função de análise para o botão no HTML
+        window.analyzeDefect = analyzeDefect;
+    </script>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <header class="text-center mb-10">
+        <!-- Ajustado de text-4xl para text-3xl em telas pequenas para melhor legibilidade -->
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white">
+            <span class="text-yellow-highlight">DF Celulares</span> - Diagnóstico e Suporte Técnico
+        </h1>
+        <p class="text-gray-400 mt-2">Use a IA para análise de defeitos e inicie o contato direto via WhatsApp.</p>
+        <p class="text-sm text-gray-500 mt-4">Seu ID de Usuário (Apenas para referência da sessão): <span id="user-id-display" class="font-mono text-xs text-yellow-highlight break-all">Aguardando autenticação...</span></p>
+    </header>
+
+    <main class="grid responsive-grid md:grid-cols-2 gap-8 max-w-7xl mx-auto">
+
+        <!-- Coluna 1: Análise de Defeitos com IA -->
+        <section class="bg-gray-900 p-6 md:p-8 rounded-xl card-shadow h-full">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-3 border-gray-700 text-yellow-highlight">1. Análise de Defeitos por IA (Gemini)</h2>
+
+            <form id="defect-form" onsubmit="event.preventDefault(); analyzeDefect();">
+                <div class="mb-4">
+                    <label for="phone-model" class="block text-sm font-medium mb-2 text-gray-300">Modelo do Celular (Ex: iPhone 14 Pro, Galaxy S23)</label>
+                    <input type="text" id="phone-model" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-primary-yellow focus:border-primary-yellow text-white" placeholder="Digite o modelo exato" required>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="defect-description" class="block text-sm font-medium mb-2 text-gray-300">Descrição do Defeito/Fato Ocorrido</label>
+                    <textarea id="defect-description" rows="4" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-primary-yellow focus:border-primary-yellow text-white" placeholder="Ex: A tela ficou preta depois de cair na água." required></textarea>
+                </div>
+
+                <button type="submit" id="analyze-btn" class="w-full primary-yellow font-bold py-3 px-4 rounded-lg transition duration-200 hover:bg-yellow-400 flex items-center justify-center">
+                    Analisar Defeito com IA
+                </button>
+            </form>
+
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-3 text-gray-200">Resultado da Análise:</h3>
+                <div id="ai-output" class="text-gray-100 min-h-[100px]">
+                    <p class="text-gray-400">Os resultados da análise do Gemini aparecerão aqui após o envio.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Coluna 2: Contato com Técnico Real (WhatsApp) -->
+        <!-- Removido h-[600px] para que a seção se ajuste automaticamente em telas pequenas -->
+        <section class="bg-gray-900 p-6 md:p-8 rounded-xl card-shadow flex flex-col md:h-full">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-3 border-gray-700 text-yellow-highlight">2. Fale com um Técnico (WhatsApp)</h2>
+            
+            <div class="flex-grow flex flex-col items-center justify-center p-4 text-center">
+                
+                <!-- Ícone do WhatsApp (SVG) -->
+                <svg class="w-16 h-16 mb-6 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path fill="currentColor" d="M380.9 97.1C339 55.1 283.4 32 223.8 32c-122.1 0-222 99.8-224 221.8-.1 39.2 5.9 77.2 17.8 112L1.8 480 112 458.7c32.9 17.5 70.3 26.6 108 26.6h.1c122.3 0 222.1-99.8 224.1-221.8 1.9-49.8-18.1-98.8-51.1-133.5zM223.8 448h.1c-34.1 0-68.5-9.3-98-27.2l-33.1-19.5-34.1 7.2 19.5-32.9c-16.1-28.7-24.8-62.4-24.8-96.2-.1-106.3 86.8-192.6 193.3-192.6 51.5 0 99.2 20.1 134.7 55.6s55.6 83.2 55.6 134.7c.2 106.3-86.5 192.7-192.8 193.1zm115.8-93.1c-6.8-3.4-40.4-19.9-46.8-22.3-6.4-2.3-11.1-3.4-15.9 3.4-4.8 6.8-18.4 22.3-22.6 27.1-4.2 4.8-8.4 5.3-15.9 1.8-7.5-3.4-31.7-11.7-60.3-37.3-22.4-19.8-37.5-44.4-41.9-51.6-4.4-7.2-.3-11.1 3.1-14.5 3.1-3.1 6.8-8.4 10.2-12.6 3.4-4.2 4.5-7.2 6.8-11.1 2.3-3.4 1.1-6.4-.6-9.5-1.8-3.1-15.9-38.1-21.7-52.1-5.9-13.8-11.8-12-15.9-12.2-4-.2-8.4-.2-12.7-.2-4.4 0-11.5 1.7-17.5 8.4-5.9 6.8-22.6 22.1-22.6 54 0 31.9 23.2 62.4 26.4 66.6 3.2 4.2 45.4 69.4 110.1 96.6 64.6 27.2 64.6 22.1 76.2 20.7 11.6-1.4 37.3-15.2 42.5-29.8 5.2-14.6 5.2-27.2 3.6-29.8-1.7-2.7-6.5-4.2-13.7-7.6z"/>
+                </svg>
+
+                <p class="text-lg text-gray-300 mb-6">
+                    Após obter a análise da IA, inicie uma conversa direta com a equipe da **DF Celulares** para agendar um serviço ou tirar dúvidas.
+                </p>
+
+                <!-- 
+                    *** INSTRUÇÃO IMPORTANTE ***
+                    Substitua '5511987654321' pelo seu número de telefone (DDI + DDD + Número) sem símbolos ou espaços.
+                    O texto 'text=' é a mensagem pré-preenchida. Use %20 para espaços.
+                -->
+                <a 
+                    id="whatsapp-link" 
+                    href="https://wa.me/5511987654321?text=Ol%C3%A1%2C%20obtive%20uma%20an%C3%A1lise%20da%20IA%20e%20gostaria%20de%20continuar%20o%20atendimento." 
+                    target="_blank" 
+                    class="whatsapp-btn w-full md:w-3/4 text-white font-bold py-4 px-4 rounded-lg transition duration-200 flex items-center justify-center shadow-lg"
+                >
+                    <!-- WhatsApp Icon (inline for aesthetic) -->
+                    <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M380.9 97.1C339 55.1 283.4 32 223.8 32c-122.1 0-222 99.8-224 221.8-.1 39.2 5.9 77.2 17.8 112L1.8 480 112 458.7c32.9 17.5 70.3 26.6 108 26.6h.1c122.3 0 222.1-99.8 224.1-221.8 1.9-49.8-18.1-98.8-51.1-133.5z"/></svg>
+                    Falar com Técnico via WhatsApp
+                </a>
+
+                <p class="text-sm text-gray-500 mt-4">
+                    **Número de Exemplo:** +55 (11) 98765-4321. Por favor, **edite o código-fonte** para incluir o seu número real.
+                </p>
+            </div>
+            
+        </section>
+
+    </main>
+</body>
+</html>
