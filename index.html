@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página com Vídeo e Música de Fundo</title>
+    <!-- Carregando Tailwind CSS para Estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Definindo a fonte Inter e garantindo que o vídeo preencha a tela */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            /* CORREÇÃO: Removido overflow: hidden para evitar problemas em alguns navegadores móveis */
+        }
+        #background-video {
+            /* Fixa o vídeo na viewport e garante que ele cubra toda a área */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Garante que o vídeo preencha o container sem distorção */
+            z-index: -3; /* Z-index mais baixo, pois o Matrix é -2 */
+            /* Começa o vídeo invisível e adiciona transição para fade-in */
+            opacity: 0; 
+            transition: opacity 1s ease-in;
+        }
+        /* Classe para transição de estados */
+        .content-transition {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        /* Garantindo que o overlay esteja sempre visível no início, cobrindo o vídeo e matrix */
+        #overlay {
+             z-index: -1; 
+        }
+
+        /* --- Estilo para o Canvas Matrix --- */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2; /* Visível atrás do overlay (-1), à frente do vídeo (-3) */
+            background: #000;
+        }
+
+        /* --- CSS para o Efeito de Digitação (CORRIGIDO) --- */
+        .typing-text {
+            /* Correção: permite quebra de linha para responsividade */
+            white-space: normal; 
+            margin: 0 auto; /* Centraliza o texto */
+            letter-spacing: .10em; /* Espaçamento de letra */
+            display: inline-block; /* Ajuda a conter o texto e centralizar */
+            max-width: 100%; /* Garante que respeite o limite do pai */
+        }
+        
+        /* CORREÇÃO CRÍTICA: O cursor (border-right) agora só aparece quando o elemento tem a classe 'typing-cursor' */
+        .typing-text.typing-cursor {
+            border-right: .15em solid #fde047; /* Cursor piscando (Amarelo) */
+            animation: blink-caret .75s step-end infinite;
+        }
+
+        /* Animação de piscar do cursor */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #fde047; } /* Cor amarela do cursor */
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-900">
+
+    <!-- CANVAS PARA EFEITO MATRIX (Visível antes do clique) -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- 1. VÍDEO DE FUNDO (Aparece DEPOIS do clique) -->
+    <!-- CORREÇÃO: playsinline garante que o vídeo toque em navegadores móveis (iOS) -->
+    <video id="background-video" autoplay loop muted playsinline poster="https://placehold.co/1920x1080/1a1a1a/cccccc?text=Carregando+Video" preload="auto">
+        <!-- 
+            !!! SUBSTITUA O LINK ABAIXO PELO SEU VÍDEO MP4 HOSPEDADO !!!
+            O link abaixo é apenas um vídeo de placeholder para demonstração.
+        -->
+         <source src="DF_CURSOS.mp4" type="video/mp4">
+        Seu navegador não suporta a tag de vídeo.
+    </video>
+
+    <!-- 2. MÚSICA DE FUNDO CUSTOMIZADA (OCULTA E INICIA APÓS INTERAÇÃO DO USUÁRIO) -->
+    <audio id="background-audio" loop>
+        <!-- 
+            !!! SUBSTITUA O LINK ABAIXO PELA SUA MÚSICA MP3 HOSPEDADA !!!
+            O áudio DEVE ser um link público para funcionar.
+        -->
+        <source src="musica.mp3" type="audio/mpeg">
+        Seu navegador não suporta a tag de áudio.
+    </audio>
+
+    <!-- 3. CAMADA DE SOBREPOSIÇÃO SEMI-TRANSPARENTE (Para legibilidade do texto) -->
+    <!-- Opacidade ajustada para bg-opacity-50 em telas pequenas e bg-opacity-70 em telas maiores. -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 md:bg-opacity-70"></div>
+
+    <!-- 4. CONTEÚDO PRINCIPAL (Centralizado na tela) -->
+    <main class="flex flex-col items-center justify-center h-screen text-white p-4">
+        <!-- O card agora usa max-w-full no mobile e define o max-w-3xl no desktop -->
+        <div id="intro-card" class="text-center w-full max-w-sm sm:max-w-md lg:max-w-3xl bg-white/10 backdrop-blur-sm p-8 md:p-12 rounded-xl shadow-2xl transition duration-500 transform scale-100">
+            
+            <!-- ESTADO INICIAL (Aparece no carregamento) -->
+            <div id="initial-prompt" class="content-transition">
+                <!-- Títulos otimizados para tamanhos de tela (mobile vs desktop) -->
+                <!-- O título agora é um span que será preenchido pelo JS -->
+                <h1 class="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 uppercase tracking-wider text-yellow-400">
+                    <span id="typed-title" class="typing-text"></span>
+                </h1>
+                
+                <!-- O subtítulo também será preenchido pelo JS -->
+                <p class="text-base sm:text-xl md:text-2xl font-light mb-8 text-gray-300 flex justify-center">
+                    <!-- O span abaixo é inicialmente vazio, e terá o texto digitado em sequência -->
+                    <span id="typed-text" class="typing-text"></span>
+                </p>
+                
+                <!-- Cor do botão para Amarelo -->
+                <button 
+                    id="start-button" 
+                    class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 active:scale-95 text-lg md:text-xl w-full sm:w-auto"
+                >
+                    Click para Entrar
+                </button>
+            </div>
+
+            <!-- ESTADO DE NAVEGAÇÃO (Aparece APÓS o clique no botão de entrar) -->
+            <div id="navigation-buttons" class="content-transition opacity-0 hidden transform scale-95">
+                
+                <!-- O bloco da Imagem no TOPO -->
+                <div class="mb-6 flex justify-center">
+                    <img 
+                        src="./foto.png" 
+                        alt="Logo ou Imagem de Perfil"
+                        class="w-40 h-40 rounded-full border-4 border-white shadow-xl object-cover"
+                        onerror="this.onerror=null; this.src='foto.png';"
+                    />
+                </div>
+                <!-- FIM DO BLOCO MOVIDO -->
+
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-semibold mb-6 text-gray-100">O que você procura hoje?</h2>
+                
+                <!-- Contêiner para os 3 novos botões (Sempre em coluna) -->
+                <div class="flex flex-col gap-4 justify-center mx-auto max-w-xs w-full">
+                    
+                    <!-- Botão 1: ACESSÓRIOS (Pink/Roxo Gradiente) -->
+                    <button 
+                        class="nav-button font-extrabold text-white py-4 px-6 rounded-xl shadow-xl transition duration-500 transform hover:scale-[1.03] hover:shadow-2xl active:scale-[0.98] text-lg w-full flex items-center justify-center space-x-3 
+                               bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700"
+                        data-action="acessorios"
+                    >
+                        <span class="text-2xl">🎧</span>
+                        <span>Acessórios para Celular</span>
+                    </button>
+                    
+                    <!-- Botão 2: MANUTENÇÕES (Ciano/Azul Gradiente) -->
+                    <button 
+                        class="nav-button font-extrabold text-white py-4 px-6 rounded-xl shadow-xl transition duration-500 transform hover:scale-[1.03] hover:shadow-2xl active:scale-[0.98] text-lg w-full flex items-center justify-center space-x-3 
+                               bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+                        data-action="manutencoes"
+                    >
+                        <span class="text-2xl">🛠️</span>
+                        <span>Manutenções</span>
+                    </button>
+                    
+                    <!-- Botão 3: CURSOS (Laranja/Amarelo Gradiente) -->
+                    <button 
+                        class="nav-button font-extrabold text-white py-4 px-6 rounded-xl shadow-xl transition duration-500 transform hover:scale-[1.03] hover:shadow-2xl active:scale-[0.98] text-lg w-full flex items-center justify-center space-x-3 
+                               bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                        data-action="cursos"
+                    >
+                        <span class="text-2xl">🎓</span>
+                        <span>Cursos</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Elemento para mostrar o status do áudio (escondido inicialmente) -->
+        <div id="audio-status" class="hidden absolute bottom-4 right-4 bg-gray-800/80 p-2 rounded-lg text-sm transition-opacity duration-500 cursor-pointer">
+            <span>🔇</span> Áudio Mudo
+        </div>
+    </main>
+
+    <!-- 5. LÓGICA JAVASCRIPT -->
+    <script>
+        
+        // Dados dos textos a serem digitados
+        const titleText = "Bem-vindo à DF Celulares";
+        const subText = "Prepare-se para uma nova experiência.";
+        const typingSpeed = 75; // Milissegundos por caractere
+
+        /**
+         * Função de utilidade para aplicar o efeito de digitação a um elemento.
+         * @param {string} elementId - ID do elemento HTML alvo.
+         * @param {string} text - O texto completo a ser digitado.
+         * @param {function} [callback] - Função a ser chamada após a conclusão da digitação.
+         */
+        function typeText(elementId, text, callback) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            let i = 0;
+            element.textContent = ''; // Limpa o conteúdo antes de começar
+            element.classList.add('typing-cursor'); // Adiciona o cursor
+
+            function typeWriter() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, typingSpeed);
+                } else {
+                    // Remove o cursor assim que a digitação for concluída (AGORA REMOVE A BORDA TAMBÉM)
+                    element.classList.remove('typing-cursor'); 
+                    
+                    if (callback) {
+                        setTimeout(callback, 500); // Pequena pausa (0.5s) antes de chamar o próximo passo
+                    }
+                }
+            }
+            typeWriter();
+        }
+
+        // Função para iniciar a sequência de digitação (Título -> Subtítulo)
+        function startSequentialTyping() {
+            // 1. Inicia a digitação do Título (o cursor desaparece 0.5s depois)
+            typeText('typed-title', titleText, () => {
+                // 2. Após a conclusão do Título, inicia a digitação do Subtítulo (o cursor desaparece ao final)
+                typeText('typed-text', subText);
+            });
+        }
+
+        // --- LÓGICA MATRIX ---
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let matrixInterval;
+        const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()';
+        let fontSize = 16;
+        let columns;
+        let drops;
+
+        // Função para ajustar o tamanho do Canvas e resetar as gotas
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            columns = Math.floor(canvas.width / fontSize);
+            drops = [];
+            for (let x = 0; x < columns; x++) {
+                drops[x] = 1; 
+            }
+        }
+
+        // Função principal de desenho do Matrix
+        function drawMatrix() {
+            // Fundo semi-transparente preto para rastro (0.05 é a opacidade)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0'; // Cor verde Matrix
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                
+                // Desenha o caractere
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                // Envia a "gota" de volta ao topo se atingir a parte inferior ou aleatoriamente
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0; 
+                }
+
+                // Move a "gota" para baixo
+                drops[i]++;
+            }
+        }
+        
+        // Inicia a animação Matrix (30 FPS)
+        function startMatrix() {
+            resizeCanvas();
+            matrixInterval = setInterval(drawMatrix, 33); 
+        }
+        
+        // Adiciona listener para redimensionamento
+        window.addEventListener('resize', resizeCanvas);
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('background-video');
+            const audio = document.getElementById('background-audio');
+            
+            const startButton = document.getElementById('start-button');
+            const initialPrompt = document.getElementById('initial-prompt');
+            const navigationButtons = document.getElementById('navigation-buttons');
+            const navButtons = document.querySelectorAll('.nav-button'); // Botões de categoria
+            
+            const overlay = document.getElementById('overlay');
+            const audioStatus = document.getElementById('audio-status');
+            
+            // NOVO: Flag para rastrear se o áudio foi iniciado pelo usuário (após o clique)
+            let isAudioStarted = false;
+
+            // Inicia o efeito Matrix no carregamento
+            startMatrix();
+            // Inicia a sequência de digitação
+            startSequentialTyping();
+
+            // Tenta dar play no vídeo imediatamente (deve funcionar se estiver MUTED), mas ele está invisível
+            // CORREÇÃO CRÍTICA: Se a reprodução automática falhar, o vídeo tentará tocar ao clicar no botão.
+            video.play().catch(error => {
+                console.warn("Autoplay do vídeo falhou. O vídeo tentará iniciar com o primeiro clique do usuário.");
+            });
+
+            // Função para alternar mudo (AGORA SÓ CONTROLA A MÚSICA CUSTOMIZADA)
+            const toggleMute = () => {
+                const isMuted = audio.muted;
+                audio.muted = !isMuted; 
+
+                if (!isMuted) {
+                    audioStatus.innerHTML = '<span>🔇</span> Mudo';
+                } else {
+                    audioStatus.innerHTML = '<span>🔊</span> Áudio Ligado';
+                }
+            };
+            
+            // Lógica disparada ao clicar no botão 'Click para Entrar'
+            startButton.addEventListener('click', () => {
+                
+                // Tenta dar play no vídeo novamente (agora forçado pela interação do usuário)
+                video.play().catch(e => {
+                    console.error("Falha ao iniciar o vídeo mesmo com interação:", e);
+                });
+
+                // Para e esconde o Canvas Matrix
+                clearInterval(matrixInterval);
+                canvas.style.display = 'none'; // Esconde o canvas
+
+                // Faz o vídeo aparecer com um fade-in suave
+                video.style.opacity = '1';
+
+                // 1. O vídeo (#background-video) continua MUTADO permanentemente.
+                // 2. Toca APENAS a música de fundo customizada (#background-audio).
+                audio.play().then(() => {
+                    isAudioStarted = true; // Define a flag como verdadeira
+                }).catch(error => {
+                    console.error("Falha ao iniciar o áudio customizado: ", error);
+                });
+
+                // 3. Transição visual: Esconde o prompt inicial
+                initialPrompt.classList.add('opacity-0', 'scale-90');
+                
+                setTimeout(() => {
+                    initialPrompt.classList.add('hidden'); // Esconde totalmente o elemento inicial
+                    
+                    // 4. Mostra a navegação
+                    navigationButtons.classList.remove('hidden'); // Revela o container de navegação
+                    // Faz o fade-in e scale-up
+                    navigationButtons.classList.remove('opacity-0', 'scale-95');
+                    navigationButtons.classList.add('opacity-100', 'scale-100'); 
+                    
+                    // 5. Torna o overlay menos opaco (vídeo aparece mais)
+                    overlay.classList.remove('bg-black', 'bg-opacity-70', 'bg-opacity-50');
+                    overlay.classList.add('bg-black', 'bg-opacity-40'); 
+                    
+                    // 6. Mostra o indicador de status do áudio
+                    audioStatus.classList.remove('hidden');
+                    audioStatus.innerHTML = '<span>🔊</span> Áudio Ligado';
+
+                    // 7. Adiciona funcionalidade de mudo no status
+                    audioStatus.addEventListener('click', toggleMute);
+
+                    // 8. Adiciona lógica para os botões de navegação
+                    navButtons.forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const action = e.currentTarget.getAttribute('data-action');
+                            // Redireciona o usuário para a página correspondente
+                            window.location.href = `${action}.html`; 
+                        });
+                    });
+
+                }, 300); // Deve ser igual ou maior que a duração da transição do elemento inicial
+            }, { once: true });
+
+            // NOVO: Listener para pausar/retomar a música ao mudar a aba/janela
+            document.addEventListener('visibilitychange', () => {
+                // Apenas se o áudio já foi iniciado e não está no modo mudo manual
+                if (isAudioStarted && !audio.muted) {
+                    if (document.hidden) {
+                        // Página em segundo plano/minimizada: pausa
+                        audio.pause();
+                    } else {
+                        // Página ativa: tenta retomar a reprodução
+                        // O catch é importante pois o navegador pode bloquear o play() sem interação
+                        audio.play().catch(e => console.log("Áudio não pôde ser retomado sem interação do usuário."));
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
+
