@@ -58,27 +58,43 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         
-        // Variáveis globais obrigatórias do ambiente
+        // Variáveis globais obrigatórias do ambiente Canvas
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : undefined;
 
         // ==============================================================================
-        // --- CHAVE DA API DA GEMINI ---
-        // Se estiver no Canvas, use "". O Canvas injeta a chave automaticamente (__initial_api_key).
-        // SE ESTIVER EM GITHUB PAGES/HOSPEDAGEM PRÓPRIA, VOCÊ DEVE INSERIR SUA CHAVE AQUI.
-        // **AVISO DE SEGURANÇA: Expor chaves em código público (GitHub Pages) não é seguro!**
-        const PRODUCTION_API_KEY = ""; // <--- COLOQUE SUA CHAVE AQUI PARA PROD.
+        // --- 🚨 CHAVE DA API DA GEMINI ---
+        // AVISO IMPORTANTE: Para publicar em ambientes externos (como GitHub Pages),
+        // você DEVE inserir sua chave da Gemini API na linha abaixo (entre as aspas).
+        const PRODUCTION_API_KEY = ""; // <--- COLOQUE SUA CHAVE AQUI PARA PROD. (Ex: 'AIzaSy...XYZ')
         
         // A chave final usa a chave do ambiente Canvas (se existir) ou a chave definida acima.
         const API_KEY = typeof __initial_api_key !== 'undefined' ? __initial_api_key : PRODUCTION_API_KEY; 
         // ==============================================================================
 
+        // ==============================================================================
+        // --- 🚨 CONFIGURAÇÃO DO FIREBASE (CRÍTICO PARA AUTENTICAÇÃO EM PROD) ---
+        // AVISO IMPORTANTE: Para publicar em ambientes externos, você DEVE
+        // COPIAR E COLAR o objeto de configuração do seu projeto Firebase na linha abaixo.
+        // Se estiver vazio, a autenticação irá FALHAR. (Ex: { apiKey: "...", authDomain: "...", ... })
+        const PRODUCTION_FIREBASE_CONFIG = {}; // <--- COLE SEU OBJETO DE CONFIG AQUI { apiKey: "...", authDomain: "...", ... }
 
-        // Inicialização do Firebase (Apenas para garantir que a autenticação de ambiente funcione)
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        // O objeto de configuração final usa o config do ambiente Canvas ou o config definido acima.
+        const FIREBASE_CONFIG = typeof __firebase_config !== 'undefined' && Object.keys(JSON.parse(__firebase_config)).length > 0
+            ? JSON.parse(__firebase_config)
+            : PRODUCTION_FIREBASE_CONFIG;
+        // ==============================================================================
+
+        // Inicialização do Firebase
+        let app = null;
+        let auth = null;
+        let isFirebaseConfigured = Object.keys(FIREBASE_CONFIG).length > 2 && FIREBASE_CONFIG.apiKey;
         
+        if (isFirebaseConfigured) {
+             app = initializeApp(FIREBASE_CONFIG);
+             auth = getAuth(app);
+        }
+
         let currentUserId = null;
         let authReady = false;
 
@@ -96,7 +112,6 @@
                         
                         let detail = `Status HTTP: ${response.status}.`;
                         if (errorText.length > 0) {
-                            // Retorna o erro exato da API para o diagnóstico
                             detail = JSON.stringify({status: response.status, body: errorText.substring(0, 200)});
                         } else {
                             detail += " Resposta vazia.";
@@ -123,68 +138,83 @@
             const analyzeBtn = document.getElementById('analyze-btn');
             const outputDiv = document.getElementById('ai-output');
             
-            // 1. Verifica se a chave foi injetada pelo Canvas (ambiente de teste)
-            if (typeof __initial_api_key !== 'undefined' && __initial_api_key.length > 0) {
-                diagnoseDiv.textContent = 'STATUS: Ambiente Canvas/Teste. Chave de API injetada automaticamente. PRONTO PARA USAR.';
-                analyzeBtn.disabled = false;
-                analyzeBtn.innerHTML = 'Analisar Defeito com IA';
-                outputDiv.innerHTML = '<p class="text-gray-400">Os resultados da análise do Gemini aparecerão aqui após o envio.</p>';
-                return true;
+            const isGeminiKeyPresent = API_KEY.length > 10;
+            const isCanvasEnvironment = typeof __initial_api_key !== 'undefined' && __initial_api_key.length > 0;
+            const isFirebaseConfigPresent = isFirebaseConfigured;
+
+            let statusMessage = '';
+            let isReady = false;
+
+            if (isCanvasEnvironment) {
+                statusMessage = 'STATUS: Ambiente Canvas/Teste. Chaves injetadas automaticamente. PRONTO PARA USAR.';
+                isReady = true;
+            } else if (isGeminiKeyPresent && isFirebaseConfigPresent) {
+                statusMessage = 'STATUS: Modo de Produção OK. Chaves Gemini e Firebase presentes. PRONTO PARA USAR.';
+                isReady = true;
+            } else {
+                statusMessage = 'STATUS: ERRO DE CONFIGURAÇÃO CRÍTICO.\n';
+                if (!isGeminiKeyPresent) {
+                    statusMessage += 'MOTIVO 1: CHAVE DA API GEMINI AUSENTE. (Cole em PRODUCTION_API_KEY)\n';
+                }
+                if (!isFirebaseConfigPresent) {
+                    statusMessage += 'MOTIVO 2: CONFIG. DO FIREBASE AUSENTE. (Cole em PRODUCTION_FIREBASE_CONFIG)\n';
+                }
+                statusMessage += '\nPASSO PARA CORRIGIR: Insira as chaves/configurações ausentes no código-fonte.';
             }
 
-            // 2. Verifica se o usuário inseriu uma chave para produção (GitHub Pages, etc.)
-            if (PRODUCTION_API_KEY && PRODUCTION_API_KEY.length > 10) { // Uma chave válida deve ter um bom comprimento
-                diagnoseDiv.textContent = 'STATUS: Modo de Produção. Chave de API Pessoal DETECTADA. PRONTO PARA USAR.';
-                analyzeBtn.disabled = false;
-                analyzeBtn.innerHTML = 'Analisar Defeito com IA';
-                outputDiv.innerHTML = '<p class="text-gray-400">Os resultados da análise do Gemini aparecerão aqui após o envio.</p>';
-                return true;
+            diagnoseDiv.textContent = statusMessage;
+            
+            analyzeBtn.disabled = !isReady;
+            if (isReady) {
+                 analyzeBtn.innerHTML = 'Analisar Defeito com IA';
+                 if (outputDiv.innerHTML.includes('ERRO CRÍTICO')) {
+                    outputDiv.innerHTML = '<p class="text-gray-400">Os resultados da análise do Gemini aparecerão aqui após o envio.</p>';
+                 }
+            } else {
+                analyzeBtn.innerHTML = '🚨 ERRO: Configuração Pendente';
+                outputDiv.innerHTML = `
+                    <p class="text-red-400 font-bold mb-2">🚨 ERRO CRÍTICO: Configuração Incompleta!</p>
+                    <p class="text-sm text-gray-400">O aplicativo **não funcionará** em ambientes externos até que as chaves/configurações ausentes sejam inseridas no código-fonte.</p>
+                `;
             }
 
-            // 3. Chave ausente (Este é o motivo da falha no GitHub Pages)
-            diagnoseDiv.textContent = `
-STATUS: ERRO DE CONFIGURAÇÃO CRÍTICO.
-MOTIVO: A CHAVE DA API ESTÁ AUSENTE. (Necessária para GitHub Pages/Hospedagem Externa).
-
-PASSO PARA CORRIGIR:
-1. Obtenha sua chave da Gemini API.
-2. No código-fonte (index.html), substitua '""' pela sua chave na variável 'PRODUCTION_API_KEY'.
-            `;
-            analyzeBtn.disabled = true;
-            analyzeBtn.innerHTML = '🚨 ERRO: Inserir Chave API';
-            outputDiv.innerHTML = `
-                <p class="text-red-400 font-bold mb-2">🚨 ERRO CRÍTICO: Chave da API Ausente!</p>
-                <p class="text-sm text-gray-400">O aplicativo **não funcionará** corretamente em ambientes externos (como GitHub Pages) até que você insira sua chave pessoal da Gemini API (PRODUCTION_API_KEY) no código-fonte.</p>
-            `;
-            return false;
+            return isReady;
         };
 
 
         // --- AUTENTICAÇÃO E INICIALIZAÇÃO ---
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUserId = user.uid;
-            } else {
-                // Tenta usar o token inicial ou faz login anônimo
-                try {
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                        currentUserId = auth.currentUser.uid;
-                    } else {
-                        await signInAnonymously(auth);
-                        currentUserId = auth.currentUser.uid;
+        if (isFirebaseConfigured) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUserId = user.uid;
+                } else {
+                    // Tenta usar o token inicial ou faz login anônimo
+                    try {
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                            currentUserId = auth.currentUser.uid;
+                        } else {
+                            await signInAnonymously(auth);
+                            currentUserId = auth.currentUser.uid;
+                        }
+                    } catch (error) {
+                        console.error("Erro ao autenticar no Firebase:", error);
+                        // Fallback para um ID aleatório se o login falhar
+                        currentUserId = crypto.randomUUID();
                     }
-                } catch (error) {
-                    console.error("Erro ao autenticar no Firebase:", error);
-                    currentUserId = crypto.randomUUID();
                 }
-            }
-            
-            document.getElementById('user-id-display').textContent = currentUserId;
-            authReady = true;
-            console.log("Autenticação Firebase concluída. User ID:", currentUserId);
-            checkConfigStatus(); // Verifica o status da chave após a autenticação inicial
-        });
+                
+                document.getElementById('user-id-display').textContent = currentUserId;
+                authReady = true;
+                console.log("Autenticação Firebase concluída. User ID:", currentUserId);
+                checkConfigStatus(); // Verifica o status da chave após a autenticação inicial
+            });
+        } else {
+            // Se o Firebase não estiver configurado, defina um ID de usuário temporário e chame o status checker
+            currentUserId = 'Firebase não configurado';
+            document.getElementById('user-id-display').textContent = '🚨 CONFIG. FIREBASE AUSENTE';
+            checkConfigStatus(); 
+        }
 
         // --- FUNÇÕES DE ANÁLISE DE IA ---
 
@@ -203,7 +233,6 @@ PASSO PARA CORRIGIR:
 
             // Verifica o status da chave antes de prosseguir com a requisição
             if (!checkConfigStatus()) {
-                // O status de erro (chave ausente) já foi atualizado por checkConfigStatus()
                 return; 
             }
 
@@ -293,7 +322,7 @@ PASSO PARA CORRIGIR:
 
             } finally {
                 // Garante que o botão volte ao normal se a config estiver OK
-                if (API_KEY.length > 0) {
+                if (API_KEY.length > 0 && isFirebaseConfigured) {
                      analyzeBtn.disabled = false;
                      analyzeBtn.innerHTML = 'Analisar Defeito com IA';
                 }
@@ -303,6 +332,11 @@ PASSO PARA CORRIGIR:
         // Expõe a função de análise e o status checker para o HTML
         window.analyzeDefect = analyzeDefect;
         window.checkConfigStatus = checkConfigStatus;
+
+        // Chama a verificação de status inicial se o Firebase não estiver configurado
+        if (!isFirebaseConfigured) {
+            checkConfigStatus();
+        }
     </script>
 </head>
 <body class="min-h-screen p-4 md:p-8">
