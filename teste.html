@@ -66,7 +66,7 @@
         // --- 🚨 CHAVE DA API DA GEMINI ---
         // INSTRUÇÃO: Cole sua chave da API do Google Gemini (AIzaSy...XYZ) aqui.
         // Deve ser uma STRING, entre as aspas.
-        const PRODUCTION_API_KEY = ""; // <--- COLOQUE SUA CHAVE GEMINI AQUI PARA PROD.
+        const PRODUCTION_API_KEY = "AIzaSyCyiuCt1nvgSgTzCdCjXpDf5tH7DEm_fuI"; // <--- COLOQUE SUA CHAVE GEMINI AQUI PARA PROD.
         
         // A chave final usa a chave do ambiente Canvas (se existir) ou a chave definida acima.
         const API_KEY = typeof __initial_api_key !== 'undefined' ? __initial_api_key : PRODUCTION_API_KEY; 
@@ -76,7 +76,14 @@
         // --- 🚨 CONFIGURAÇÃO DO FIREBASE (CRÍTICO PARA AUTENTICAÇÃO EM PROD) ---
         // INSTRUÇÃO: Cole o OBJETO COMPLETO de configuração do seu projeto Firebase aqui.
         // Deve ser um objeto JS (chaves {}) contendo apiKey, authDomain, projectId, etc.
-        const PRODUCTION_FIREBASE_CONFIG = {}; // <--- COLE SEU OBJETO DE CONFIG DO FIREBASE AQUI
+        const PRODUCTION_FIREBASE_CONFIG = {apiKey: "AIzaSyBAm5mHS5HRiRdBEyelblmxCgFpl59jzfo",
+                                            authDomain: "df-celulares-100f3.firebaseapp.com",
+                                            projectId: "df-celulares-100f3",
+                                            storageBucket: "df-celulares-100f3.firebasestorage.app",
+                                            messagingSenderId: "782999738515",
+                                            appId: "1:782999738515:web:7811859a0d8759ae1f1566",
+                                            measurementId: "G-L6XLCT44H9"}; // <--- COLE SEU OBJETO DE CONFIG DO FIREBASE AQUI
+        
         
         // O objeto de configuração final usa o config do ambiente Canvas ou o config definido acima.
         const FIREBASE_CONFIG = typeof __firebase_config !== 'undefined' && Object.keys(JSON.parse(__firebase_config)).length > 0
@@ -433,3 +440,4 @@
     </main>
 </body>
 </html>
+
