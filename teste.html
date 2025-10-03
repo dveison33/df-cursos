@@ -75,20 +75,26 @@
         // ==============================================================================
         // --- 🚨 CONFIGURAÇÃO DO FIREBASE (CRÍTICO PARA AUTENTICAÇÃO EM PROD) ---
         // AVISO IMPORTANTE: Para publicar em ambientes externos, você DEVE
-        // COPIAR E COLAR o objeto de configuração do seu projeto Firebase na linha abaixo.
-        // Se estiver vazio, a autenticação irá FALHAR. (Ex: { apiKey: "...", authDomain: "...", ... })
+        // COPIAR E COLAR o objeto de configuração **INTEIRO** do seu projeto Firebase.
+        // O erro 'auth/invalid-api-key' significa que o 'apiKey' neste objeto está incorreto.
         const PRODUCTION_FIREBASE_CONFIG = {}; // <--- COLE SEU OBJETO DE CONFIG AQUI { apiKey: "...", authDomain: "...", ... }
 
         // O objeto de configuração final usa o config do ambiente Canvas ou o config definido acima.
         const FIREBASE_CONFIG = typeof __firebase_config !== 'undefined' && Object.keys(JSON.parse(__firebase_config)).length > 0
             ? JSON.parse(__firebase_config)
             : PRODUCTION_FIREBASE_CONFIG;
+        
+        const isFirebaseConfigured = Object.keys(FIREBASE_CONFIG).length > 2 && FIREBASE_CONFIG.apiKey;
+
+        console.log(`[Config Diagnóstico] Ambiente Canvas detectado? ${typeof __initial_api_key !== 'undefined' ? 'Sim' : 'Não'}`);
+        console.log(`[Config Diagnóstico] Chave Gemini em uso: ${API_KEY.length > 10 ? 'PRODUCTION_API_KEY ou Injetada' : 'Ausente/Vazia'}`);
+        console.log(`[Config Diagnóstico] Config Firebase carregada: ${isFirebaseConfigured ? 'Sim (Chave:' + FIREBASE_CONFIG.apiKey.substring(0, 5) + '...)' : 'Não'}`);
         // ==============================================================================
+
 
         // Inicialização do Firebase
         let app = null;
         let auth = null;
-        let isFirebaseConfigured = Object.keys(FIREBASE_CONFIG).length > 2 && FIREBASE_CONFIG.apiKey;
         
         if (isFirebaseConfigured) {
              app = initializeApp(FIREBASE_CONFIG);
@@ -140,7 +146,7 @@
             
             const isGeminiKeyPresent = API_KEY.length > 10;
             const isCanvasEnvironment = typeof __initial_api_key !== 'undefined' && __initial_api_key.length > 0;
-            const isFirebaseConfigPresent = isFirebaseConfigured;
+            // isFirebaseConfigured já está definido globalmente no módulo
 
             let statusMessage = '';
             let isReady = false;
@@ -148,7 +154,7 @@
             if (isCanvasEnvironment) {
                 statusMessage = 'STATUS: Ambiente Canvas/Teste. Chaves injetadas automaticamente. PRONTO PARA USAR.';
                 isReady = true;
-            } else if (isGeminiKeyPresent && isFirebaseConfigPresent) {
+            } else if (isGeminiKeyPresent && isFirebaseConfigured) {
                 statusMessage = 'STATUS: Modo de Produção OK. Chaves Gemini e Firebase presentes. PRONTO PARA USAR.';
                 isReady = true;
             } else {
@@ -156,7 +162,7 @@
                 if (!isGeminiKeyPresent) {
                     statusMessage += 'MOTIVO 1: CHAVE DA API GEMINI AUSENTE. (Cole em PRODUCTION_API_KEY)\n';
                 }
-                if (!isFirebaseConfigPresent) {
+                if (!isFirebaseConfigured) {
                     statusMessage += 'MOTIVO 2: CONFIG. DO FIREBASE AUSENTE. (Cole em PRODUCTION_FIREBASE_CONFIG)\n';
                 }
                 statusMessage += '\nPASSO PARA CORRIGIR: Insira as chaves/configurações ausentes no código-fonte.';
@@ -187,6 +193,8 @@
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     currentUserId = user.uid;
+                    document.getElementById('user-id-display').textContent = currentUserId;
+                    authReady = true;
                 } else {
                     // Tenta usar o token inicial ou faz login anônimo
                     try {
@@ -194,20 +202,20 @@
                             await signInWithCustomToken(auth, initialAuthToken);
                             currentUserId = auth.currentUser.uid;
                         } else {
+                            // Se o token inicial não existe (fora do Canvas), faz o login anônimo
                             await signInAnonymously(auth);
                             currentUserId = auth.currentUser.uid;
                         }
                     } catch (error) {
-                        console.error("Erro ao autenticar no Firebase:", error);
-                        // Fallback para um ID aleatório se o login falhar
-                        currentUserId = crypto.randomUUID();
+                        console.error("Erro ao autenticar no Firebase (CHAVE OU CONFIG. INVÁLIDA):", error);
+                        // Se o erro for de API Key, ele será reportado aqui.
+                        currentUserId = `ERRO: ${error.code}`;
+                    } finally {
+                         document.getElementById('user-id-display').textContent = currentUserId;
+                         authReady = true;
+                         checkConfigStatus(); // Verifica o status da chave após a tentativa de autenticação
                     }
                 }
-                
-                document.getElementById('user-id-display').textContent = currentUserId;
-                authReady = true;
-                console.log("Autenticação Firebase concluída. User ID:", currentUserId);
-                checkConfigStatus(); // Verifica o status da chave após a autenticação inicial
             });
         } else {
             // Se o Firebase não estiver configurado, defina um ID de usuário temporário e chame o status checker
@@ -255,7 +263,7 @@
             };
             
             // Log do diagnóstico antes da chamada
-            diagnoseDiv.textContent = `STATUS: Enviando Requisição...\n\nMODELO: gemini-2.5-flash-preview-05-20\nCHAVE: ${API_KEY ? 'Presente' : 'Ausente (Usando Injeção do Canvas)'}\nURL: ${apiUrl.substring(0, 80)}...\n\nQUERY ENVIADA:\n${userQuery}`;
+            diagnoseDiv.textContent = `STATUS: Enviando Requisição...\n\nMODELO: gemini-2.5-flash-preview-05-20\nCHAVE: ${API_KEY.length > 10 ? 'Presente' : 'Ausente/Injetada'}\nURL: ${apiUrl.substring(0, 80)}...\n\nQUERY ENVIADA:\n${userQuery}`;
 
 
             try {
