@@ -64,9 +64,9 @@
 
         // ==============================================================================
         // --- 🚨 CHAVE DA API DA GEMINI ---
-        // AVISO IMPORTANTE: Para publicar em ambientes externos (como GitHub Pages),
-        // você DEVE inserir sua chave da Gemini API na linha abaixo (entre as aspas).
-        const PRODUCTION_API_KEY = ""; // <--- COLOQUE SUA CHAVE AQUI PARA PROD. (Ex: 'AIzaSy...XYZ')
+        // INSTRUÇÃO: Cole sua chave da API do Google Gemini (AIzaSy...XYZ) aqui.
+        // Deve ser uma STRING, entre as aspas.
+        const PRODUCTION_API_KEY = ""; // <--- COLOQUE SUA CHAVE GEMINI AQUI PARA PROD.
         
         // A chave final usa a chave do ambiente Canvas (se existir) ou a chave definida acima.
         const API_KEY = typeof __initial_api_key !== 'undefined' ? __initial_api_key : PRODUCTION_API_KEY; 
@@ -74,11 +74,10 @@
 
         // ==============================================================================
         // --- 🚨 CONFIGURAÇÃO DO FIREBASE (CRÍTICO PARA AUTENTICAÇÃO EM PROD) ---
-        // AVISO IMPORTANTE: Para publicar em ambientes externos, você DEVE
-        // COPIAR E COLAR o objeto de configuração **INTEIRO** do seu projeto Firebase.
-        // O erro 'auth/invalid-api-key' significa que o 'apiKey' neste objeto está incorreto.
-        const PRODUCTION_FIREBASE_CONFIG = {}; // <--- COLE SEU OBJETO DE CONFIG AQUI { apiKey: "...", authDomain: "...", ... }
-
+        // INSTRUÇÃO: Cole o OBJETO COMPLETO de configuração do seu projeto Firebase aqui.
+        // Deve ser um objeto JS (chaves {}) contendo apiKey, authDomain, projectId, etc.
+        const PRODUCTION_FIREBASE_CONFIG = {}; // <--- COLE SEU OBJETO DE CONFIG DO FIREBASE AQUI
+        
         // O objeto de configuração final usa o config do ambiente Canvas ou o config definido acima.
         const FIREBASE_CONFIG = typeof __firebase_config !== 'undefined' && Object.keys(JSON.parse(__firebase_config)).length > 0
             ? JSON.parse(__firebase_config)
@@ -207,9 +206,9 @@
                             currentUserId = auth.currentUser.uid;
                         }
                     } catch (error) {
-                        console.error("Erro ao autenticar no Firebase (CHAVE OU CONFIG. INVÁLIDA):", error);
-                        // Se o erro for de API Key, ele será reportado aqui.
-                        currentUserId = `ERRO: ${error.code}`;
+                        console.error("Erro ao autenticar no Firebase:", error);
+                        // Se o erro for de API Key (auth/invalid-api-key), ele será reportado no display
+                        currentUserId = `ERRO: ${error.code.toUpperCase().replace('AUTH/', '')}`;
                     } finally {
                          document.getElementById('user-id-display').textContent = currentUserId;
                          authReady = true;
