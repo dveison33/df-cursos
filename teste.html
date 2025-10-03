@@ -92,18 +92,37 @@
             return bytes.buffer;
         };
 
-        // Função de retry com backoff exponencial para chamadas de API
+        /**
+         * Função de retry com backoff exponencial para chamadas de API.
+         * Registra erros detalhados no console em caso de falha HTTP.
+         */
         const fetchWithRetry = async (url, options, retries = 3) => {
             for (let i = 0; i < retries; i++) {
                 try {
                     const response = await fetch(url, options);
+                    
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        const errorText = await response.text();
+                        console.error(`Tentativa ${i + 1} falhou com status ${response.status}:`, errorText);
+                        
+                        // Lança um erro detalhado para ser capturado no bloco try/catch principal
+                        let detail = `Status HTTP: ${response.status}.`;
+                        if (errorText.length > 0) {
+                            detail += ` Detalhe (max 150 chars): ${errorText.substring(0, 150)}`;
+                        } else {
+                            detail += " Resposta vazia.";
+                        }
+                        
+                        throw new Error(`Erro na API (Falha na requisição): ${detail}`);
                     }
                     return response;
                 } catch (error) {
-                    if (i === retries - 1) throw error;
+                    if (i === retries - 1) {
+                         // Lança o erro na última tentativa
+                         throw error;
+                    }
                     const delay = Math.pow(2, i) * 1000;
+                    // console.log(`Tentativa falhou. Retentando em ${delay / 1000}s...`); // Removido log para evitar spam
                     await new Promise(resolve => setTimeout(resolve, delay));
                 }
             }
@@ -152,12 +171,13 @@
             analyzeBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Análisando com IA...';
             outputDiv.innerHTML = '<p class="text-gray-400">Consultando o Gemini para uma análise...</p>';
 
-
-            const systemPrompt = "Você é um analista técnico de celulares experiente e prestativo. Sua tarefa é analisar o modelo e a descrição do defeito e fornecer: 1. Uma provável causa (Causa Provável). 2. Uma ou duas sugestões de solução/próximo passo que o usuário pode tentar (Soluções Sugeridas). Mantenha a resposta concisa e profissional, em português.";
-            const userQuery = `Modelo do Celular: ${model}. Defeito ou Fato Ocorrido: ${defect}`;
+            // A chave da API deve ser deixada vazia para ser injetada pelo ambiente
             const apiKey = ""; 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
+            const systemPrompt = "Você é um analista técnico de celulares experiente e prestativo. Sua tarefa é analisar o modelo e a descrição do defeito e fornecer: 1. Uma provável causa (Causa Provável). 2. Uma ou duas sugestões de solução/próximo passo que o usuário pode tentar (Soluções Sugeridas). Mantenha a resposta concisa e profissional, em português.";
+            const userQuery = `Modelo do Celular: ${model}. Defeito ou Fato Ocorrido: ${defect}`;
+            
             const payload = {
                 contents: [{ parts: [{ text: userQuery }] }],
                 tools: [{ "google_search": {} }], // Adiciona o Google Search para grounding
@@ -208,12 +228,18 @@
                     `;
 
                 } else {
-                    outputDiv.innerHTML = '<p class="text-red-400">Não foi possível obter uma resposta da IA. Tente reformular a descrição.</p>';
+                    // Trata caso a resposta da API seja bem-sucedida (status 200), mas sem conteúdo (por exemplo, bloqueio de segurança)
+                    outputDiv.innerHTML = '<p class="text-red-400">Não foi possível obter uma resposta da IA. A resposta pode estar vazia devido a um bloqueio de segurança ou erro interno. Tente reformular a descrição do defeito.</p>';
+                    console.error("Resposta da API sem conteúdo de texto. Resultado completo:", result);
                 }
 
             } catch (error) {
-                console.error("Erro na chamada da API Gemini:", error);
-                outputDiv.innerHTML = `<p class="text-red-400">Erro de conexão: ${error.message}. Verifique a sua chave API e a conexão.</p>`;
+                console.error("Erro fatal na chamada da API Gemini:", error);
+                outputDiv.innerHTML = `
+                    <p class="text-red-400 font-bold mb-2">Erro de Comunicação com a IA.</p>
+                    <p class="text-sm text-gray-400">Pode ser um erro de rede ou de autenticação (chave da API). Por favor, verifique o console do navegador para detalhes.</p>
+                    <p class="text-xs mt-2 text-gray-500">Mensagem do erro: ${error.message}</p>
+                `;
             } finally {
                 analyzeBtn.disabled = false;
                 analyzeBtn.innerHTML = 'Analisar Defeito com IA';
@@ -227,7 +253,6 @@
 <body class="min-h-screen p-4 md:p-8">
 
     <header class="text-center mb-10">
-        <!-- Ajustado de text-4xl para text-3xl em telas pequenas para melhor legibilidade -->
         <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white">
             <span class="text-yellow-highlight">DF Celulares</span> - Diagnóstico e Suporte Técnico
         </h1>
@@ -260,13 +285,12 @@
             <div class="mt-8">
                 <h3 class="text-xl font-semibold mb-3 text-gray-200">Resultado da Análise:</h3>
                 <div id="ai-output" class="text-gray-100 min-h-[100px]">
-                    <p class="text-gray-400">Os resultados da análise do Gemini aparecerão aqui após o envio.</p>
+                    <p class="text-gray-400">Os resultados da análise do Gemini aparecerão aqui após o envio. Se houver falha, as informações de erro aparecerão aqui e no console.</p>
                 </div>
             </div>
         </section>
 
         <!-- Coluna 2: Contato com Técnico Real (WhatsApp) -->
-        <!-- Removido h-[600px] para que a seção se ajuste automaticamente em telas pequenas -->
         <section class="bg-gray-900 p-6 md:p-8 rounded-xl card-shadow flex flex-col md:h-full">
             <h2 class="text-2xl font-bold mb-6 border-b pb-3 border-gray-700 text-yellow-highlight">2. Fale com um Técnico (WhatsApp)</h2>
             
