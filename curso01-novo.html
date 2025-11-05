@@ -37,27 +37,45 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 15px rgba(251, 191, 36, 0.15);
         }
+        .testimonial-card {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+        .testimonial-card:hover {
+            border-color: #fbbf24;
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+        /* Estilo para os cards de passo, mais imponentes */
+        .step-card {
+            background-color: #1a1a1a;
+            border-left: 8px solid #fbbf24;
+            transition: transform 0.2s;
+        }
+        .step-card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 6px 12px rgba(251, 191, 36, 0.15);
+        }
     </style>
 </head>
 <body>
 
-    <!-- Variáveis de Configuração e Links (Apenas para referência, o link Kiwify está direto no HTML) -->
+    <!-- Variáveis de Configuração (Referência) -->
     <script>
-        // O link de compra Kiwify agora está inserido diretamente nos botões CTA.
         const KIWIFY_LINK = "https://pay.kiwify.com.br/nrYgNFY";
-        const WHATSAPP_NUMBER = "5511987654321"; 
-        const WHATSAPP_MESSAGE = "Quero garantir minha vaga no curso Formatação Descomplicada da DF CURSOS e começar a lucrar.";
+        // As constantes estão nos botões CTA e não precisam ser usadas via JS.
     </script>
 
     <!-- 1. Seção Principal (Hero - Com Banner de Imagem Tecnológica) -->
     <header id="hero" class="relative p-8 md:p-16 lg:p-20 text-center border-b-4 border-amber-600 overflow-hidden">
         
         <!-- Imagem de Fundo (Tag IMG) - Visual Tecnológico e Profissional -->
-        <img src="capa-curso01.png" 
+        <img src="https://placehold.co/1200x600/101010/333333?text=BANNER+TECNOLÓGICO" 
              alt="Banner profissional com linhas de código e elementos de hardware, simbolizando o domínio em formatação e reparo de sistemas." 
              class="absolute inset-0 w-full h-full object-cover min-h-[400px]">
         
-        <!-- Overlay Escuro (MANTIDO para garantir a leitura do texto dourado) -->
+        <!-- Overlay Escuro -->
         <div class="absolute inset-0 bg-black opacity-75 z-10"></div>
 
         <!-- Conteúdo Principal (Textos e Botão) -->
@@ -94,8 +112,32 @@
         </div>
     </section>
 
-    <!-- 3. Seção Target Audience (Público-Alvo) -->
-    <section id="publico" class="py-16 px-4 md:px-12 lg:px-24 text-center bg-gray-900">
+    <!-- 3. Seção Conheça o Instrutor (Autoridade) -->
+    <section id="instructor" class="py-16 px-4 md:px-12 lg:px-24 bg-gray-900">
+        <div class="max-w-4xl mx-auto text-center md:text-left flex flex-col md:flex-row items-center gap-8 p-6 rounded-2xl border-t-2 border-b-2 border-amber-500">
+            
+            <!-- Foto do Instrutor (Placeholder) -->
+            <img src="https://placehold.co/150x150/fbbf24/0a0a0a?text=DF" 
+                 alt="Foto do David Ferreira, instrutor da DF CURSOS." 
+                 class="w-36 h-36 rounded-full border-4 border-white shadow-xl flex-shrink-0">
+
+            <!-- Texto do Instrutor -->
+            <div>
+                <h3 class="text-3xl font-black mb-3 gold-accent">
+                    CONHEÇA O DAVID FERREIRA
+                </h3>
+                <p class="text-lg text-gray-300 mb-4">
+                    Com mais de **10 anos de experiência** em manutenção de hardware e sistemas operacionais, David Ferreira, fundador da DF CURSOS, criou o método Formatação Descomplicada. Ele já treinou centenas de alunos a transformar o conhecimento técnico em **liberdade financeira**.
+                </p>
+                <p class="text-md font-semibold text-gray-400">
+                    Ele desmistificou o que era complexo para que você possa aprender de forma prática, rápida e, principalmente, lucrativa.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Seção Target Audience (Público-Alvo) -->
+    <section id="publico" class="py-16 px-4 md:px-12 lg:px-24 text-center">
         <h3 class="text-3xl font-black mb-10 text-white">
             PARA QUEM É A FORMATAÇÃO DESCOMPLICADA?
         </h3>
@@ -118,50 +160,163 @@
         </div>
     </section>
 
-    <!-- 4. Seção Conteúdo Programático Detalhado -->
-    <section id="conteudo-detalhado" class="py-16 px-4 md:px-12 lg:px-24">
+    <!-- 5. Seção Conteúdo Programático Detalhado (AGORA 7 PASSOS) -->
+    <section id="conteudo-detalhado" class="py-16 px-4 md:px-12 lg:px-24 bg-gray-900">
         <div class="max-w-5xl mx-auto">
             <h3 class="text-3xl md:text-4xl font-black mb-12 gold-accent text-center">
-                DOMÍNIO TOTAL: O QUE VOCÊ VAI APRENDER
+                FORMAÇÃO PROFISSIONAL EM 7 PASSOS SIMPLES
             </h3>
             
-            <!-- Layout em grade: 1 coluna no mobile, 2 no desktop -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- LISTA DE 7 PASSOS -->
+            <div class="max-w-3xl mx-auto space-y-4">
                 
-                <!-- Coluna 1: Fundamentos e Instalação -->
-                <div class="space-y-4">
-                    <h4 class="text-xl md:text-2xl font-bold text-white mb-4 border-b border-gray-700 pb-2">Fundamentos e Preparação</h4>
-                    
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">1. O que é **BIOS/UEFI** e sua função crítica.</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">2. Entendendo o processo de **BOOT** (inicialização).</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">3. Como **mudar a ordem de BOOT** em qualquer máquina.</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">4. O que é um arquivo **ISO** (imagem do sistema).</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">5. Onde **baixar sistemas** operacionais de forma segura.</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">6. O que é um **pendrive bootável**.</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">7. Como **criar um pendrive bootável** de forma descomplicada.</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">8. **Instalação de diversos Sistemas Operacionais** (Linux e Windows).</p></div>
+                <div class="step-card p-5 rounded-xl shadow-lg">
+                    <p class="text-xl font-bold gold-accent mb-1">PASSO 1</p>
+                    <p class="font-semibold text-lg text-white">Backup dos arquivos: Aprenda a salvar os dados do cliente de forma rápida e segura, garantindo a integridade da informação.</p>
+                </div>
+                
+                <div class="step-card p-5 rounded-xl shadow-lg">
+                    <p class="text-xl font-bold gold-accent mb-1">PASSO 2</p>
+                    <p class="font-semibold text-lg text-white">Download do Sistema: Saiba onde baixar as imagens ISOs oficiais (Windows e Linux) para instalações livres de vírus.</p>
+                </div>
+                
+                <div class="step-card p-5 rounded-xl shadow-lg">
+                    <p class="text-xl font-bold gold-accent mb-1">PASSO 3</p>
+                    <p class="font-semibold text-lg text-white">Criação de pendrive bootável: Utilize as ferramentas corretas para transformar seu pendrive em uma mídia de instalação profissional e funcional.</p>
+                </div>
+                
+                <div class="step-card p-5 rounded-xl shadow-lg">
+                    <p class="text-xl font-bold gold-accent mb-1">PASSO 4</p>
+                    <p class="font-semibold text-lg text-white">Alteração da ordem de boot: Domine o acesso à BIOS/UEFI em qualquer máquina e configure-a para iniciar pelo seu pendrive.</p>
+                </div>
+                
+                <div class="step-card p-5 rounded-xl shadow-lg">
+                    <p class="text-xl font-bold gold-accent mb-1">PASSO 5</p>
+                    <p class="font-semibold text-lg text-white">Instalação do sistema: Execute a formatação e instalação do sistema operacional do zero, incluindo a gestão de partições.</p>
+                </div>
+                
+                <!-- CORREÇÃO: Adicionando o título PASSO 6 -->
+                <div class="step-card p-5 rounded-xl shadow-lg">
+                    <p class="text-xl font-bold gold-accent mb-1">PASSO 6</p>
+                    <p class="font-semibold text-lg text-white">Instalação dos drivers e ativação do Windows: Deixe a máquina 100% funcional com todos os drivers e o Windows ativado legalmente.</p>
+                </div>
+                
+                <div class="step-card p-5 rounded-xl shadow-lg bg-amber-600 text-gray-900 font-extrabold">
+                    <p class="text-xl font-black mb-1">PASSO 7</p>
+                    <p class="font-semibold text-lg">Download e ativação do Office: Instale e ative o Pacote Office (Word, Excel, etc.) de forma correta e gratuita para o cliente.</p>
                 </div>
 
-                <!-- Coluna 2: Avançado e Otimização -->
-                <div class="space-y-4">
-                    <h4 class="text-xl md:text-2xl font-bold text-white mb-4 border-b border-gray-700 pb-2">Ambiente de Lucro e Otimização</h4>
+            </div>
+            <!-- FIM DA LISTA DE 7 PASSOS -->
+        </div>
+    </section>
+
+    <!-- 6. Seção Comparativo (Valor vs. Custo) -->
+    <section id="comparativo" class="py-16 px-4 md:px-12 lg:px-24 bg-black">
+        <div class="max-w-7xl mx-auto">
+            <h3 class="text-3xl md:text-4xl font-black mb-12 gold-accent text-center">
+                COMPARE AS OPÇÕES: QUAL O SEU MELHOR INVESTIMENTO?
+            </h3>
+            
+            <!-- Alterado para 2 colunas no desktop para que as duas primeiras fiquem lado a lado -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8"> 
+                
+                <!-- Opção 1: Técnico Padrão -->
+                <div class="p-8 rounded-xl bg-gray-900 border-2 border-gray-700 shadow-xl flex flex-col h-full">
+                    <h4 class="text-2xl font-black mb-4 text-white">TÉCNICO DO MERCADO (BÁSICO)</h4>
+                    <!-- Preço em cinza/vermelho para não parecer atrativo -->
+                    <p class="text-5xl font-extrabold text-red-400 mb-6">R$ 50,00</p>
                     
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">9. O que é uma **Máquina Virtual (VM)**.</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">10. Como **criar um ambiente de teste** 100% seguro (VM).</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">11. Como **ativar o Windows gratuitamente** (métodos oficiais e corretos).</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">12. Como **baixar e instalar todos os Drivers** necessários para o Windows.</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">13. Como **baixar e ativar o Pacote Office gratuitamente** (métodos corretos).</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">14. **Criação de Imagem do Sistema** no Linux (backup profissional).</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md"><p class="font-semibold text-base md:text-lg text-white">15. **Criação de Imagem do Sistema** no Windows (restauração rápida).</p></div>
-                    <div class="topic-card p-4 rounded-lg shadow-md bg-amber-600 text-gray-900 font-extrabold"><p class="text-base md:text-lg">Tudo isso para você **economizar** ou **lucrar imediatamente**.</p></div>
+                    <ul class="text-lg text-gray-300 space-y-3 flex-grow mb-6">
+                        <li class="flex items-center">
+                            <!-- Ícone X em vermelho forte -->
+                            <svg class="w-6 h-6 mr-3 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                            Formatação Simples (Apenas Sistema)
+                        </li>
+                        <li class="flex items-center">
+                            <!-- Ícone X em vermelho forte -->
+                            <svg class="w-6 h-6 mr-3 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                            <span class="font-bold">SEM BACKUP</span> dos seus arquivos
+                        </li>
+                        <li class="flex items-center">
+                            <!-- Ícone X em vermelho forte -->
+                            <svg class="w-6 h-6 mr-3 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                            Sistema e Drivers <span class="font-bold">NÃO ATIVADOS</span>
+                        </li>
+                        <li class="flex items-center">
+                            <!-- Ícone X em vermelho forte -->
+                            <svg class="w-6 h-6 mr-3 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                            <span class="font-bold">SEM PROGRAMAS</span> (Office, Chrome, etc.)
+                        </li>
+                    </ul>
+                    <p class="text-base text-red-400 font-semibold mt-auto">RISCO: Perda de dados e sistema incompleto.</p>
+                </div>
+                
+                <!-- Opção 2: Técnico Completo -->
+                <div class="p-8 rounded-xl bg-gray-900 border-2 border-gray-700 shadow-xl flex flex-col h-full">
+                    <h4 class="text-2xl font-black mb-4 text-white">TÉCNICO DO MERCADO (COMPLETO)</h4>
+                    <!-- Preço em dourado para parecer um custo alto -->
+                    <p class="text-5xl font-extrabold gold-accent mb-6">R$ 120,00</p>
+                    
+                    <ul class="text-lg text-gray-300 space-y-3 flex-grow mb-6">
+                        <li class="flex items-center">
+                            <svg class="w-6 h-6 mr-3 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            Formatação Completa e Profissional
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-6 h-6 mr-3 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <span class="font-bold">COM BACKUP</span> de arquivos
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-6 h-6 mr-3 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            Sistema e Drivers Ativados
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-6 h-6 mr-3 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <span class="font-bold">COM PROGRAMAS</span> Padrão (Office, Chrome, etc.)
+                        </li>
+                    </ul>
+                    <p class="text-base text-gray-400 font-semibold mt-auto">CUSTO RECORRENTE: Você paga R$ 120,00 **toda vez** que precisar formatar.</p>
+                </div>
+
+                <!-- Adicionado um wrapper para ocupar duas colunas e centralizar o item no desktop -->
+                <div class="md:col-span-2 flex justify-center">
+                    <!-- Opção 3: DF CURSOS - DESTAQUE -->
+                    <!-- Adicionado max-w-xl e w-full para controlar o tamanho máximo do card centralizado -->
+                    <div class="p-8 rounded-xl gold-bg text-gray-900 border-4 border-amber-800 shadow-2xl shadow-amber-500/50 flex flex-col h-full transform scale-105 transition-transform duration-300 max-w-xl w-full">
+                        <h4 class="text-2xl font-black mb-4 uppercase">Opção <span class="text-black">DF CURSOS</span></h4>
+                        <p class="text-5xl font-extrabold text-black mb-4">R$ 47,00</p>
+                        <p class="text-sm font-semibold mb-6">Investimento ÚNICO para o conhecimento vitalício</p>
+                        
+                        <ul class="text-lg text-gray-900 space-y-3 flex-grow mb-6">
+                            <li class="flex items-center font-bold">
+                                <svg class="w-6 h-6 mr-3 text-black flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                <span class="font-extrabold">Formatação Completa e Profissional</span>
+                            </li>
+                            <li class="flex items-center font-bold">
+                                <svg class="w-6 h-6 mr-3 text-black flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                <span class="font-extrabold">Você Formata Quando Quiser</span> (Custo ZERO)
+                            </li>
+                            <li class="flex items-center font-bold">
+                                <svg class="w-6 h-6 mr-3 text-black flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                <span class="font-extrabold">FONTE DE RENDA EXTRA!</span>
+                            </li>
+                            <li class="flex items-center font-bold">
+                                <svg class="w-6 h-6 mr-3 text-black flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                Recupere o Investimento com <span class="font-extrabold">1 Serviço Simples</span>.
+                            </li>
+                        </ul>
+                        <a href="https://pay.kiwify.com.br/nrYgNFY" class="purchase-cta cta-button w-full inline-block bg-black text-amber-400 font-black py-3 px-6 rounded-xl text-lg transition duration-300 mt-auto">
+                            QUERO O CONHECIMENTO VITALÍCIO
+                        </a>
+                    </div>
                 </div>
 
             </div>
         </div>
     </section>
 
-
-    <!-- 5. Seção de Preço e CTA Final (Garantia de Retorno) -->
+    <!-- 7. Seção de Preço e CTA Final (Garantia de Retorno) -->
     <section id="preco-cta" class="py-16 px-4 md:px-12 lg:px-24 bg-gray-950">
         <div class="max-w-4xl mx-auto text-center">
             
@@ -192,11 +347,10 @@
         </div>
     </section>
 
-    <!-- 6. Rodapé Simples -->
+    <!-- 8. Rodapé Simples -->
     <footer class="p-6 text-center text-gray-500 text-sm bg-black border-t border-gray-700">
         <p>&copy; 2025 DF CURSOS. Formação Descomplicada. Todos os direitos reservados.</p>
     </footer>
 
 </body>
 </html>
-
