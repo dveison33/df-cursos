@@ -115,13 +115,23 @@
 
         <!-- Profile / Header Section -->
         <header class="flex flex-col items-center text-center w-full pt-2">
-            <!-- Glowing Circle Logo -->
+            <!-- Glowing Circle Logo com Foto -->
             <div class="logo-glow mb-4 transition-transform duration-300 hover:scale-105">
-                <div class="w-28 h-28 rounded-full p-[3px] bg-gradient-to-b from-yellow-300 via-amber-500 to-yellow-600 shadow-gold-glow flex items-center justify-center">
-                    <div class="w-full h-full bg-black rounded-full flex flex-col items-center justify-center p-2 border-2 border-amber-400/50">
-                        <i class="fa-solid fa-mobile-screen-button text-3xl text-amber-400 mb-1"></i>
-                        <span class="font-black text-amber-400 text-[10px] tracking-widest uppercase">DF ACADEMY</span>
-                    </div>
+                <div class="w-28 h-28 rounded-full p-[3px] bg-gradient-to-b from-yellow-300 via-amber-500 to-yellow-600 shadow-gold-glow flex items-center justify-center overflow-hidden">
+                    
+                    <!-- ========================================================================= -->
+                    <!-- 🖼️ ONDE COLOCAR O NOME DA SUA IMAGEM / FOTO DE PERFIL:                     -->
+                    <!-- Substitua o valor dentro do src="..." abaixo pelo nome da sua imagem.     -->
+                    <!--                                                                           -->
+                    <!-- Exemplo 1 (imagem salva na mesma pasta): src="minha-foto.jpg"             -->
+                    <!-- Exemplo 2 (link direto da web): src="https://seusite.com/foto.png"         -->
+                    <!-- ========================================================================= -->
+                    <img 
+                        src="dveison.jpeg" 
+                        alt="DF Academy" 
+                        class="w-full h-full object-cover rounded-full border-2 border-amber-400/50"
+                        onerror="this.onerror=null; this.src='https://placehold.co/200x200/000000/FFD700?text=Sua+Foto';"
+                    >
                 </div>
             </div>
 
@@ -133,10 +143,10 @@
 
             <!-- Bio Description -->
             <div class="text-zinc-300 text-xs sm:text-sm leading-relaxed px-2 space-y-2">
-                <p class="text-zinc-300 font-medium">Te ensino a ganhar dinheiro com compra e venda e manutenção de celulares! 🚀🔥</p>
+                <p class="text-zinc-300 font-medium">Aprenda do zero ao avançado no mercado de assistência técnica e vendas! 🚀🔥</p>
                 <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold shadow-lg">
                     <i class="fa-solid fa-star text-amber-400"></i>
-                    <span>Venha fazer parte desse time você também Cb !</span>
+                    <span>Tudo isso com preço super especial!</span>
                     <i class="fa-solid fa-star text-amber-400"></i>
                 </div>
             </div>
